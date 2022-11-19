@@ -19,6 +19,7 @@ import ArrowLeft from "../../../icons/ArrowLeft";
 import Pagination from "./Pagination";
 import routes from "../../../utils/routes";
 import Link from "next/link";
+import {useRouter} from "next/router";
 
 const TableElement = styled.table`
   margin-top: 1rem;
@@ -83,8 +84,22 @@ const SelectedRowsNoWrapper = styled.div`
   margin: .4rem 0;
 `
 
+const Row = styled.tr`
+  &:nth-child(even) {
+    background: #eee;
+  }
+`
+
+const EmptyDataRow = styled.tr`
+  td {
+    text-align: center;
+    padding: 1rem 0 0.3rem 0;
+  }
+`
+
 
 const ReportTable = ({data, renderSearch}) => {
+    const router = useRouter()
     const [rowSelection, setRowSelection] = React.useState({})
     const [globalFilter, setGlobalFilter] = React.useState('')
     const columns = React.useMemo<ColumnDef<any>[]>(createColumns, [])
@@ -102,6 +117,11 @@ const ReportTable = ({data, renderSearch}) => {
         debugTable: true,
     })
 
+    const handleGenerateSummaryReportClick = () => {
+        const ids = Object.keys(rowSelection).map(idx => table.getRow(idx).getValue('id')).join(',')
+        router.push(`/summary-report/?ids=${ids}`)
+    }
+
     const noOfRowsSelected = Object.keys(rowSelection).length
 
     return (
@@ -110,12 +130,12 @@ const ReportTable = ({data, renderSearch}) => {
                 <SingleActionsWrapper>
                     {renderSearch()}
                     <Link href={routes.SEND}>
-                        <SingleActionSmallButton>Wyślij plik</SingleActionSmallButton>
+                        <SingleActionSmallButton>Wyślij nowy plik</SingleActionSmallButton>
                     </Link>
                 </SingleActionsWrapper>
                 {noOfRowsSelected > 0 && (
                     <BulkActionsWrapper>
-                        <SmallButton>Wygeneruj raport zbiorczy</SmallButton>
+                        <SmallButton onClick={handleGenerateSummaryReportClick}>Wygeneruj raport zbiorczy</SmallButton>
                         <SmallButton>Usuń wybrane raporty</SmallButton>
                     </BulkActionsWrapper>
                 )}
@@ -144,7 +164,7 @@ const ReportTable = ({data, renderSearch}) => {
                 <tbody>
                 {table.getRowModel().rows.map(row => {
                     return (
-                        <tr key={row.id}>
+                        <Row key={row.id}>
                             {row.getVisibleCells().map(cell => {
                                 return (
                                     <td key={cell.id}>
@@ -155,10 +175,14 @@ const ReportTable = ({data, renderSearch}) => {
                                     </td>
                                 )
                             })}
-                        </tr>
+                        </Row>
                     )
                 })}
-
+                {table.getPreFilteredRowModel().rows.length === 0 && (
+                    <EmptyDataRow>
+                        <td colSpan={table.getAllColumns().length}>Brak plików</td>
+                    </EmptyDataRow>
+                )}
                 </tbody>
             </TableElement>
             <Pagination />

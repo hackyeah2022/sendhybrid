@@ -431,6 +431,7 @@ __metadata:
   dependencies:
     "@emotion/react": ^11.10.5
     "@fontsource/open-sans": ^4.5.13
+    "@headlessui/react": ^1.7.4
     "@mantine/core": ^5.8.2
     "@mantine/hooks": ^5.8.2
     "@tanstack/react-query": ^4.16.1
@@ -460,6 +461,18 @@ __metadata:
     wretch: ^2.1.5
   languageName: unknown
   linkType: soft
+
+"@headlessui/react@npm:^1.7.4":
+  version: 1.7.4
+  resolution: "@headlessui/react@npm:1.7.4"
+  dependencies:
+    client-only: ^0.0.1
+  peerDependencies:
+    react: ^16 || ^17 || ^18
+    react-dom: ^16 || ^17 || ^18
+  checksum: cd7192aa0748d715ed0da94435f217a1a618894a09df722c8b6ac0967c0c2f93b4c1e6b29c4993a3303dc453b20b05323d2a37239408740391989a64b7dce38c
+  languageName: node
+  linkType: hard
 
 "@humanwhocodes/config-array@npm:^0.10.5":
   version: 0.10.7
@@ -1412,6 +1425,13 @@ __metadata:
     ansi-styles: ^4.1.0
     supports-color: ^7.1.0
   checksum: fe75c9d5c76a7a98d45495b91b2172fa3b7a09e0cc9370e5c8feb1c567b85c4288e2b3fded7cfdd7359ac28d6b3844feb8b82b8686842e93d23c827c417e83fc
+  languageName: node
+  linkType: hard
+
+"client-only@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "client-only@npm:0.0.1"
+  checksum: 0c16bf660dadb90610553c1d8946a7fdfb81d624adea073b8440b7d795d5b5b08beb3c950c6a2cf16279365a3265158a236876d92bce16423c485c322d7dfaf8
   languageName: node
   linkType: hard
 

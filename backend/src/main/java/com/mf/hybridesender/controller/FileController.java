@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,9 @@ public class FileController {
             FileDB savedFile = fileRepository.save(fileDB);
             pdfReader.checkIfPdf(savedFile.getId());
             pdfReader.checkSignatures(savedFile.getId());
+            pdfReader.checkIfFontsEmbeded(savedFile.getId());
+            pdfReader.checkImagesRequirements(savedFile.getId());
+            pdfReader.checkIfFreeOfForms(savedFile.getId());
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (Exception e) {
@@ -70,6 +74,6 @@ public class FileController {
     public FileModel getDetails(@PathVariable String id) {
         FileDB fileDB = fileRepository.getById(id);
 
-        return new FileModel(fileDB.getId(),fileDB.getName(),fileDB.getType());
+        return new FileModel(fileDB.getId(), fileDB.getName(), fileDB.getType());
     }
 }
