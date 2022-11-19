@@ -1,10 +1,13 @@
 import styled from 'styled-components';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { showNotification } from '@mantine/notifications';
 
 import useUploadFile from 'hooks/useUploadFile';
+import theme from 'utils/styled/theme';
 import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 import FileInput from 'components/atoms/FileInput/FileInput';
 import Button from 'components/atoms/Button/Button';
+import Modal from 'components/atoms/Modal/Modal';
 
 export interface SendPageProps {}
 
@@ -14,8 +17,20 @@ const PageContainer = styled(PageContainerBase)`
 `;
 
 const SendPage: FC<SendPageProps> = ({ ...props }) => {
+  const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File>();
-  const { uploadFile, uploadProgress } = useUploadFile();
+  const { uploadFile, uploadProgress, errorMessage, uploadedSuccessfully } =
+    useUploadFile();
+
+  useEffect(() => setIsModalOpened(!!errorMessage), [errorMessage]);
+  useEffect(() => {
+    uploadedSuccessfully &&
+      showNotification({
+        title: 'Success!',
+        message: 'Your document was uploaded successfully!',
+        color: theme.colors.accent[1],
+      });
+  }, [uploadedSuccessfully]);
 
   return (
     <PageContainer centerContent {...props}>
@@ -29,6 +44,9 @@ const SendPage: FC<SendPageProps> = ({ ...props }) => {
           Wyślij plik
         </Button>
       )}
+      <Modal opened={isModalOpened} setIsOpened={setIsModalOpened}>
+        {errorMessage}
+      </Modal>
     </PageContainer>
   );
 };
