@@ -12,19 +12,24 @@ export const Wrapper = styled.form`
 
 export const Label = styled.label`
   font-size: 0.85rem;
-  color: ${({ theme }) => theme.colors.gray};
+  color: ${({ theme }) => theme.colors.neutral[5]};
 `;
 
 export const Input = styled.input`
   width: 100%;
   height: 2rem;
-  border: 1px solid ${({ theme }) => theme.colors.mediumLightGray};
+  border: 1px solid ${({ theme }) => theme.colors.neutral[2]};
   border-radius: 0.25rem;
+
+  &:focus {
+    border: none;
+    outline: ${({ theme }) => theme.colors.primary[1]} solid 2px;
+  }
 `;
 
 export const InputErrorText = styled.p.attrs({ role: 'alert' })`
   font-size: 0.75rem;
-  color: ${({ theme }) => theme.colors.red};
+  color: ${({ theme }) => theme.colors.secondary[1]};
 `;
 
 export const InputWrapper = styled.div`
