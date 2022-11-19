@@ -1,11 +1,11 @@
 package com.mf.hybridesender.controller;
 
+import com.mf.hybridesender.controller.model.FileModel;
 import com.mf.hybridesender.db.FileDB;
 import com.mf.hybridesender.repositories.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/files/")
+@RequestMapping("/files")
 public class FileController {
 
     @Autowired
@@ -44,10 +44,26 @@ public class FileController {
         return files;
     }
 
-    @GetMapping("/{id}")
-    public byte[] getFile(@PathVariable String id) {
+    @GetMapping("/content/{id}")
+    public ResponseEntity<?> getContent(@PathVariable String id) {
         FileDB fileDB = fileRepository.getById(id);
 
-        return fileDB.getData();
+
+        ByteArrayResource resource = new ByteArrayResource(fileDB.getData());
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(fileDB.getData().length)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment()
+                                .filename(fileDB.getName())
+                                .build().toString())
+                .body(resource);
+    }
+
+    @GetMapping("/details/{id}")
+    public FileModel getDetails(@PathVariable String id) {
+        FileDB fileDB = fileRepository.getById(id);
+
+        return new FileModel(fileDB.getId(),fileDB.getName(),fileDB.getType());
     }
 }
