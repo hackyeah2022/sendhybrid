@@ -13,8 +13,4 @@ export const Wrapper = styled(motion.div)<WrapperProps>`
   transform-style: preserve-3d;
   display: flex;
   flex-direction: column;
-
-  ${({ topMargin }) => (topMargin ? `margin-top: 128px;` : ``)}
-
-  ${({ centerContent }) => (centerContent ? `align-items: center;` : ``)}
 `;
