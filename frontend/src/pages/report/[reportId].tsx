@@ -8,11 +8,12 @@ import PageContainer from "../../components/atoms/PageContainer/PageContainer";
 import XCircle from "../../icons/XCircle";
 import CheckCircle from "../../icons/CheckCircle";
 import GoBack from "../../components/atoms/GoBack/GoBack";
+import environment from "../../environment";
 
 const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 1rem;
+  grid-gap: 2rem;
   width: 75%;
   margin: 1rem auto 0 auto;
   max-width: 100%;
@@ -25,6 +26,8 @@ const ReportErrorWrapper = styled.div`
 
 const ReportName = styled.h1`
   margin-top: 0.6rem;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
 `
 
 const PreviewArea = styled.div`
@@ -60,7 +63,8 @@ const AddressesGrid = styled.div`
 
 const PreviewWrapper = styled.div`
 .react-pdf__Page__canvas {
-  border: 2px solid ${({theme}) => theme.colors.blue};
+  //border: 2px solid ${({theme}) => theme.colors.lightGray};
+  filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
   border-radius: 0.25rem;
 }
 `
@@ -101,8 +105,8 @@ const ReportPage: FC<ReportPageProps> = ({reportDetails}) => {
                 <GoBack />
                 <ReportName>{reportDetails.name}</ReportName>
                 <span>
-                    Data weryfikacji: {new Date(reportDetails.verificationDate).toDateString()} |
-                    ID pliku: {reportDetails.id} |
+                    ID pliku: {reportDetails.id} <br />
+                    Data weryfikacji: {new Date(reportDetails.verificationDate).toLocaleDateString()} <br />
                     Wielkość pliku: {reportDetails.fileSize}b
                 </span>
                 <AddressesGrid>
@@ -153,13 +157,14 @@ const ReportPage: FC<ReportPageProps> = ({reportDetails}) => {
 
 export default ReportPage
 
-export const getServerSideProps = ({params: {reportId}}: GetServerSidePropsContext): GetServerSidePropsResult<{reportDetails: ReportDetails}> => {
+export const getServerSideProps = async ({params: {reportId}}: GetServerSidePropsContext): GetServerSidePropsResult<{reportDetails: ReportDetails}> => {
+    const res = await fetch(`${environment.API_URL}/files/details/${reportId}`).then(res => res.json())
     return {
         props: {
             reportDetails: {
-                id: reportId,
-                name: 'Wezwanie',
-                previewUrl: '/sample-file.pdf',
+                id: res.id,
+                name: res.name,
+                previewUrl: `${environment.API_URL}/files/content/${res.id}`,
                 verificationDate: '2022-10-12',
                 fileSize: 4000,
                 errorsList: [

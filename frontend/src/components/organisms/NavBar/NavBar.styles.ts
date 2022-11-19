@@ -11,4 +11,5 @@ export const Wrapper = styled.nav`
   align-items: center;
   border-bottom: 2px solid ${({ theme }) => theme.colors.lightGray};
   z-index: ${({ theme }) => theme.zIndexes.navBar};
+  background: ${({ theme }) => theme.colors.white};
 `;
