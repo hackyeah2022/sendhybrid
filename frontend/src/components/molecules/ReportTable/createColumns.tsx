@@ -2,6 +2,11 @@ import React from "react";
 import IndeterminateCheckbox from "./IndeterminateCheckbox";
 import Button from "../../atoms/Button/Button";
 import styled from "styled-components";
+import StatusIcon from "../../atoms/StatusIcon/StatusIcon";
+
+const CustomStatusIcon = styled(StatusIcon)`
+  width: 2rem;
+`
 
 const GoToReportButton = styled(Button)`
   background: ${({theme}) => theme.colors.lightBlue};
@@ -55,6 +60,7 @@ cell: ({ row }) => (
 {
     header: 'Status weryfikacji',
         accessorKey: 'status',
+    cell: () => <CustomStatusIcon isOk={false} />,
     footer: props => props.column.id,
 },
 {
