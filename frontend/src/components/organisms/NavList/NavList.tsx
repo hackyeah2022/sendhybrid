@@ -21,20 +21,6 @@ const NavList: FC<Props> = ({ ...props }) => {
         >
           Landing
         </PageNavLink>
-        <PageNavLink
-          dst={routes.BLOG}
-          hasIndicator
-          isActive={router.pathname.startsWith(routes.BLOG)}
-        >
-          Blog
-        </PageNavLink>
-        <PageNavLink
-          dst={routes.ABOUT}
-          hasIndicator
-          isActive={router.pathname === routes.ABOUT}
-        >
-          About
-        </PageNavLink>
       </S.LinkList>
     </S.Wrapper>
   );
