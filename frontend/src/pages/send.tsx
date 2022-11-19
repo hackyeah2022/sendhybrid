@@ -1,11 +1,17 @@
+import styled from 'styled-components';
 import { FC, useState } from 'react';
 
 import useUploadFile from 'hooks/useUploadFile';
-import PageContainer from 'components/atoms/PageContainer/PageContainer';
+import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 import FileInput from 'components/atoms/FileInput/FileInput';
 import Button from 'components/atoms/Button/Button';
 
 export interface SendPageProps {}
+
+const PageContainer = styled(PageContainerBase)`
+  padding-top: 4rem;
+  gap: 1rem;
+`;
 
 const SendPage: FC<SendPageProps> = ({ ...props }) => {
   const [selectedFile, setSelectedFile] = useState<File>();

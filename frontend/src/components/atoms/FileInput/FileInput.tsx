@@ -1,6 +1,8 @@
 import { FC } from 'react';
 import { useDropzone } from 'react-dropzone';
 
+import Button from 'components/atoms/Button/Button';
+
 import * as S from './FileInput.styles';
 
 export interface Props {
@@ -18,17 +20,34 @@ const FileInput: FC<Props> = ({
   const onDrop = (acceptedFiles: File[]) => setSelectedFile(acceptedFiles[0]);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    maxFiles: 1,
   });
 
   return (
-    <S.Wrapper {...getRootProps()} {...props}>
+    <S.Wrapper
+      animate={{ scale: !selectedFile ? (isDragActive ? 1.05 : 1) : 1 }}
+      {...(getRootProps() as any)}
+      {...props}
+    >
       <S.Input {...getInputProps()} />
-      {isDragActive ? (
-        <S.InfoText>Upuść tutaj plik</S.InfoText>
-      ) : (
-        <S.InfoText>Przenieś tutaj plik</S.InfoText>
+      {!!selectedFile && (
+        <S.SelectedFileWrapper layout>
+          {selectedFile.name && (
+            <S.SelectedFileName>{selectedFile.name}</S.SelectedFileName>
+          )}
+        </S.SelectedFileWrapper>
       )}
-      <S.ProgressBar $value={progress} />
+      {!selectedFile && isDragActive && (
+        <S.InfoText>Upuść tutaj plik</S.InfoText>
+      )}
+      {!selectedFile && !isDragActive && (
+        <>
+          <S.InfoText>Przenieś tutaj plik</S.InfoText>
+          <S.InfoText>lub</S.InfoText>
+          <Button>Wybierz plik</Button>
+        </>
+      )}
+      {progress > 0 && <S.ProgressBar layout $value={progress} />}
     </S.Wrapper>
   );
 };
