@@ -7,7 +7,7 @@ export const Wrapper = styled.nav`
   padding: 0 1rem;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid ${({ theme }) => theme.colors.lightGray};
   z-index: ${({ theme }) => theme.zIndexes.navBar};

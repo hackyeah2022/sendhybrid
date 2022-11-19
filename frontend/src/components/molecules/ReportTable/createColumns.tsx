@@ -3,6 +3,7 @@ import IndeterminateCheckbox from "./IndeterminateCheckbox";
 import Button from "../../atoms/Button/Button";
 import styled from "styled-components";
 import StatusIcon from "../../atoms/StatusIcon/StatusIcon";
+import Link from "next/link";
 
 const CustomStatusIcon = styled(StatusIcon)`
   width: 2rem;
@@ -60,12 +61,20 @@ cell: ({ row }) => (
 {
     header: 'Status weryfikacji',
         accessorKey: 'status',
-    cell: () => <CustomStatusIcon isOk={false} />,
+    cell: () =><CustomStatusIcon isOk={false} />,
     footer: props => props.column.id,
 },
 {
     header: 'Zobacz raport',
-        cell: () => <GoToReportButton>Zobacz raport</GoToReportButton>,
+
+    cell: ({row: {getValue}}) => (
+        <Link href={`/report/${getValue('id')}`}>
+            <a>
+                <GoToReportButton>Zobacz raport</GoToReportButton>
+            </a>
+        </Link>
+    ),
+
     footer: props => props.column.id,
 },
 ]
