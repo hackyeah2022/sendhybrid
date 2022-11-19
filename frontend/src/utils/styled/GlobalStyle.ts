@@ -22,8 +22,8 @@ const GlobalStyle = createGlobalStyle`
     font-kerning: normal;
     overflow-x: clip;
     
-    background-color: ${theme.colors.neutral[0]};
-    color: ${theme.colors.neutral[8]};
+    background-color: ${theme.colors.white};
+    color: ${theme.colors.black};
     font-family: "Inter", sans-serif;
     line-height: 1.5;
   }

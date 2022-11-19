@@ -1,6 +1,7 @@
 const routes = {
   LANDING: '/',
-  ABOUT: '/about',
+  LOGIN: '/login',
+  SEND: '/send',
 };
 
 export default routes;

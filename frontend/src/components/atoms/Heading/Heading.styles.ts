@@ -4,5 +4,5 @@ export const Wrapper = styled.h1`
   font-weight: 700;
   font-size: 48px;
   line-height: 1.15;
-  color: ${({ theme }) => theme.colors.neutral[8]};
+  color: ${({ theme }) => theme.colors.white};
 `;
