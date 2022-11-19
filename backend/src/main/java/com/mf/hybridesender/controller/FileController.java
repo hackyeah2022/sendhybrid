@@ -33,6 +33,7 @@ public class FileController {
             FileDB fileDB = new FileDB(fileName, file.getContentType(), file.getBytes());
             FileDB savedFile = fileRepository.save(fileDB);
             pdfReader.checkIfPdf(savedFile.getId());
+            pdfReader.checkSignatures(savedFile.getId());
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (Exception e) {
