@@ -7,6 +7,10 @@ const colors = {
   blue: '#0052a5',
   lightBlue: '#006cd7',
   red: '#d5233f',
+  neutral: ['#f1f1f1', '#dcdcdc', '#b3b3b3', '#727272', '#3f3f3f', '#1b1b1b'],
+  primary: ['#daedff', '#4286ca', '#003c78', '#002952'],
+  secondary: ['#fbabb8', '#d5233f', '#892121', '#521111'],
+  accent: ['#caedce', '#42e054', '#1f962d', '#06450d'],
 };
 
 const layout = {
