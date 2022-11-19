@@ -3,7 +3,10 @@ package com.mf.hybridesender.controller;
 import com.mf.hybridesender.controller.model.FileModel;
 import com.mf.hybridesender.db.FileDB;
 import com.mf.hybridesender.repositories.FileRepository;
+import com.mf.hybridesender.services.PdfReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.util.StringUtils;
@@ -19,6 +22,8 @@ public class FileController {
 
     @Autowired
     private FileRepository fileRepository;
+    @Autowired
+    private PdfReader pdfReader;
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
@@ -26,8 +31,8 @@ public class FileController {
         try {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             FileDB fileDB = new FileDB(fileName, file.getContentType(), file.getBytes());
-            fileRepository.save(fileDB);
-
+            FileDB savedFile = fileRepository.save(fileDB);
+            pdfReader.checkIfPdf(savedFile.getId());
             message = "Uploaded the file successfully: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (Exception e) {
