@@ -11,7 +11,8 @@ import {Menu} from '@headlessui/react'
 import UserCircle from "../../../icons/UserCircle";
 
 const Logo = styled.img`
-  height: calc(100% - 1rem);
+  height: 3rem;
+  margin-right: 2rem;
 `
 
 const DropdownWrapper = styled.div`
@@ -65,6 +66,23 @@ const DropdownMenuItem = styled.a`
   }
 `
 
+const LeftSideWrapper = styled.div`
+  display: flex;
+  height: 100%;
+  align-items: center;
+`
+
+const NavLink = styled.a`
+  padding: 0 0.8rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  transition: .2s all;
+  &:hover {
+    background: #eee;
+  }
+`
+
 const UserDropdown = ({name}) => (
     <DropdownWrapper>
         <Menu>
@@ -110,7 +128,20 @@ const NavBar: FC<Props> = ({...props}) => {
     const isLoggedIn = true;
     return (
         <S.Wrapper {...props}>
-            <Logo src="/KAS_logo.jpg"/>
+            <LeftSideWrapper>
+                <Link href="/" passHref legacyBehavior>
+                    <a><Logo src="/KAS_logo.jpg"/></a>
+                </Link>
+                {
+                    isLoggedIn && (
+                        <>
+                            <Link href="/dashboard" passHref legacyBehavior>
+                                <NavLink>Dashboard</NavLink>
+                            </Link>
+                        </>
+                    )
+                }
+            </LeftSideWrapper>
             {router.pathname !== routes.LOGIN && !isLoggedIn && (
                 <Link href={routes.LOGIN} passHref legacyBehavior>
                     <Button as="a">Login</Button>

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Link from "next/link";
 
 const StyledA = styled.a`
-  display: flex;
+  display: inline-flex;
   align-items: center;
   cursor: pointer;
   svg {
