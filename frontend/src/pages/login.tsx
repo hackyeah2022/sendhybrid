@@ -5,7 +5,11 @@ import PageContainer from 'components/atoms/PageContainer/PageContainer';
 export interface LoginPageProps {}
 
 const LoginPage: FC<LoginPageProps> = ({ ...props }) => {
-  return <PageContainer {...props}>Login</PageContainer>;
+  return (
+    <PageContainer centerContent {...props}>
+      Login
+    </PageContainer>
+  );
 };
 
 export default LoginPage;
