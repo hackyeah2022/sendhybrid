@@ -8,8 +8,12 @@ export interface Props {
   children: ReactNode;
 }
 
-const Button: FC<Props> = ({ children, ...props }) => {
-  return <S.Wrapper {...props}>{children}</S.Wrapper>;
+const Button: FC<Props> = ({ solid, children, ...props }) => {
+  return (
+    <S.Wrapper $solid={!!solid} {...props}>
+      {children}
+    </S.Wrapper>
+  );
 };
 
 export default Button;
