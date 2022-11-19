@@ -4,12 +4,18 @@ import * as S from './PageContainer.styles';
 
 export interface Props {
   wide?: boolean;
+  centerContent?: boolean;
   children: ReactNode;
 }
 
-const PageContainer: FC<Props> = ({ wide, children, ...props }) => {
+const PageContainer: FC<Props> = ({
+  wide,
+  centerContent,
+  children,
+  ...props
+}) => {
   return (
-    <S.Wrapper $wide={!!wide} {...props}>
+    <S.Wrapper $wide={!!wide} $centerContent={!!centerContent} {...props}>
       {children}
     </S.Wrapper>
   );

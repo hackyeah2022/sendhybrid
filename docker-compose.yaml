@@ -16,25 +16,25 @@ services:
     depends_on:
       - api
 
-  db:
-    image: postgres:15-alpine
-    restart: always
-    user: postgres
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=hackyeah
-    networks:
-      - server-side
-    ports:
-      - 5432:5432
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d hackyeah -U ${POSTGRES_USER}"]
-      interval: 3s
-      timeout: 5s
-      retries: 5
+#  db:
+#    image: postgres:15-alpine
+#    restart: always
+#    user: postgres
+#    environment:
+#      - POSTGRES_USER=${POSTGRES_USER}
+#      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#      - POSTGRES_DB=hackyeah
+#    networks:
+#      - server-side
+#    ports:
+#      - 5432:5432
+#    volumes:
+#      - db-data:/var/lib/postgresql/data
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -d hackyeah -U ${POSTGRES_USER}"]
+#      interval: 3s
+#      timeout: 5s
+#      retries: 5
 
 networks:
   client-side: {}
