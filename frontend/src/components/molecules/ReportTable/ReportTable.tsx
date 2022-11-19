@@ -17,6 +17,8 @@ import Button from "../../atoms/Button/Button";
 import ReactPaginate from "react-paginate";
 import ArrowLeft from "../../../icons/ArrowLeft";
 import Pagination from "./Pagination";
+import routes from "../../../utils/routes";
+import Link from "next/link";
 
 const TableElement = styled.table`
   margin-top: 1rem;
@@ -45,6 +47,12 @@ const SingleActionSmallButton = styled(Button)`
 
 const SmallButton = styled(Button)`
   padding: 0.5rem 0.7rem;
+  transition: .2s all;
+
+  &:hover {
+    background: ${({theme}) => theme.colors.blue};
+    color: ${({theme}) => theme.colors.white};
+  }
 `
 
 const BulkActionsWrapper = styled.div`
@@ -55,7 +63,7 @@ const BulkActionsWrapper = styled.div`
   border: 2px solid ${({theme}) => theme.colors.lightGray};
   
   ${SmallButton} {
-    margin: 0 .2rem;  
+    margin: 0 .2rem;
   }
   
   &::after {
@@ -76,17 +84,10 @@ const SelectedRowsNoWrapper = styled.div`
 `
 
 
-const ReportTable = () => {
+const ReportTable = ({data, renderSearch}) => {
     const [rowSelection, setRowSelection] = React.useState({})
     const [globalFilter, setGlobalFilter] = React.useState('')
     const columns = React.useMemo<ColumnDef<any>[]>(createColumns, [])
-
-    const [data, setData] = React.useState([{
-        id: 'sdsadff-sdfds',
-        name: 'Wezwanie',
-        status: false,
-        date: '2022-231'
-    }])
 
     const table = useReactTable({
         data,
@@ -107,7 +108,10 @@ const ReportTable = () => {
         <>
             <ActionsWrapper>
                 <SingleActionsWrapper>
-                    <SingleActionSmallButton>Wyślij plik</SingleActionSmallButton>
+                    {renderSearch()}
+                    <Link href={routes.SEND}>
+                        <SingleActionSmallButton>Wyślij plik</SingleActionSmallButton>
+                    </Link>
                 </SingleActionsWrapper>
                 {noOfRowsSelected > 0 && (
                     <BulkActionsWrapper>
@@ -154,6 +158,7 @@ const ReportTable = () => {
                         </tr>
                     )
                 })}
+
                 </tbody>
             </TableElement>
             <Pagination />

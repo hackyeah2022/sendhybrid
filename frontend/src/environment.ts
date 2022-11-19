@@ -1,9 +1,11 @@
 interface Environment {
-    API_URL: string
+  API_URL: string;
 }
 
 const environment: Environment = {
-    API_URL: process.env.API_URL ?? ''
-}
+  API_URL: process.env.NEXT_PUBLIC_API_URL ?? '',
+};
 
-export default environment
+console.log(environment);
+
+export default environment;
