@@ -16,6 +16,7 @@ const Wrapper = styled.div`
   width: 75%;
   margin: 1rem auto 0 auto;
   max-width: 100%;
+  height: calc(100vh - ${({theme}) => theme.layout.navBarHeight});
 `
 
 const ReportErrorWrapper = styled.div`
@@ -58,8 +59,10 @@ const AddressesGrid = styled.div`
 `
 
 const PreviewWrapper = styled.div`
+.react-pdf__Page__canvas {
   border: 2px solid ${({theme}) => theme.colors.blue};
   border-radius: 0.25rem;
+}
 `
 
 const StatusWrapper = styled.div``
