@@ -8,11 +8,16 @@ const colors = {
   red: '#d5233f',
 };
 
+const layout = {
+  navBarHeight: '4rem',
+};
+
 const zIndexes = {
+  navBar: 500,
   debug: 9999,
 };
 
-const theme = { colors, zIndexes };
+const theme = { colors, layout, zIndexes };
 
 export type CustomTheme = typeof theme;
 export { colors };

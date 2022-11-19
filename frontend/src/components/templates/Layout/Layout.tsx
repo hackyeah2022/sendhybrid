@@ -1,6 +1,8 @@
 import { FC, ReactNode } from 'react';
 
-import * as S from 'components/templates/Layout/Layout.styles';
+import NavBar from 'components/organisms/NavBar/NavBar';
+
+import * as S from './Layout.styles';
 
 export interface Props {
   children: ReactNode;
@@ -9,6 +11,7 @@ export interface Props {
 const Layout: FC<Props> = ({ children, ...props }) => {
   return (
     <S.Wrapper {...props}>
+      <NavBar />
       <S.Content>{children}</S.Content>
     </S.Wrapper>
   );
