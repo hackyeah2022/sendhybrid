@@ -20,7 +20,7 @@ const Heading = styled.h1`
 const SearchInput = styled.input`
   background: #eee;
   border: 2px solid #eee;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-family: inherit;
   padding: 0.2rem 0.4rem;
   border-radius: 0.25rem;
