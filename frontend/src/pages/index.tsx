@@ -2,12 +2,27 @@ import type { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 
-import PageContainer from 'components/atoms/PageContainer/PageContainer';
+import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 
 export interface LandingPageProps {}
 
+const PageContainer = styled(PageContainerBase)`
+  margin-top: 4rem;
+`;
+
+const VerticalLine = styled.div`
+  width: 24rem;
+  height: 2px;
+  margin: 0.5rem 0 1rem 0;
+  background-color: ${({ theme }) => theme.colors.secondary[1]};
+`;
+
+const AppInfo = styled.p`
+  color: ${({ theme }) => theme.colors.neutral[4]};
+`;
+
 const PageHeading = styled.h1`
-  font-size: 48px;
+  font-size: 64px;
   color: ${({ theme }) => theme.colors.primary[3]};
 `;
 
@@ -21,6 +36,11 @@ const Landing: FC<LandingPageProps> = () => {
       </Head>
 
       <PageHeading>StampIT</PageHeading>
+      <VerticalLine />
+      <AppInfo>
+        StampIT pozwala na lorem ipsum dolor sit amet. StampIT pozwala na lorem
+        ipsum dolor sit amet. StampIT pozwala na lorem ipsum dolor sit amet.
+      </AppInfo>
     </PageContainer>
   );
 };
