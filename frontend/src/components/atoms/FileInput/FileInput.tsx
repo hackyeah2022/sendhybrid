@@ -21,6 +21,7 @@ const FileInput: FC<Props> = ({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     maxFiles: 1,
+    maxSize: 1024 * 1024 * 100,
   });
 
   return (

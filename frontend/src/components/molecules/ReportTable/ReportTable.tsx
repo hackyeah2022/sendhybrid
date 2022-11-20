@@ -125,26 +125,21 @@ const ReportTable = ({data, renderSearch}) => {
         router.push(`/summary-report/?ids=${ids}`)
     }
 
-    const handleDeleteSelectedIds = () => {
-        setIsDeleteModalOpened(true)
-    }
 
-    const noOfRowsSelected = 4
+    const noOfRowsSelected = Object.keys(rowSelection).length
 
     return (
         <>
-            <DeleteModal isOpened={isDeleteModalOpened} setIsModalOpened={setIsDeleteModalOpened} />
             <ActionsWrapper>
                 <SingleActionsWrapper>
                     {renderSearch()}
                     <Link href={routes.SEND}>
-                        <SingleActionSmallButton>Wyślij nowy plik</SingleActionSmallButton>
+                        <SingleActionSmallButton>Wyślij nowy dokument</SingleActionSmallButton>
                     </Link>
                 </SingleActionsWrapper>
                 {noOfRowsSelected > 0 && (
                     <BulkActionsWrapper>
                         <SmallButton onClick={handleGenerateSummaryReportClick}>Wygeneruj raport zbiorczy</SmallButton>
-                        <SmallButton onClick={handleDeleteSelectedIds}>Usuń wybrane raporty</SmallButton>
                     </BulkActionsWrapper>
                 )}
             </ActionsWrapper>

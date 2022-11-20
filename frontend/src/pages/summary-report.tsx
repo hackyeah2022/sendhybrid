@@ -10,7 +10,7 @@ import {useDebouncedValue} from "@mantine/hooks";
 import {GetServerSidePropsContext, GetServerSidePropsResult} from "next";
 import {ReportDetails} from "../types/report";
 import GoBack from "../components/atoms/GoBack/GoBack";
-import ReportError from "../components/atoms/ReportError/ReportError";
+import FeedbackMessage from "../components/atoms/FeedbackMessage/FeedbackMessage";
 import SingleReportCard from "../components/molecules/SummaryReport/SingleReportCard";
 
 const Wrapper = styled.div`

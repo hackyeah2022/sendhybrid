@@ -32,17 +32,21 @@ const SearchInput = styled.input`
   }
 `;
 
-const ActionWrapper = styled.div``;
 
-const fetchReports = () =>
-  fetch(`${environment.API_URL}/files`)
+const fetchReports = (caseId?: string) =>
+  fetch(
+      caseId && caseId.trim().length > 0 ?
+          `${environment.API_URL}/documents/getByCaseNumber/${caseId}` :
+          `${environment.API_URL}/documents/getAll`
+  )
     .then(res => res.json())
     .then(res =>
-      res.map((reportId: string) => ({
-        id: reportId,
-        name: reportId,
-        status: false,
-        date: '2022-231',
+      res.map((singleDoc) => ({
+        id: singleDoc.id,
+        name: singleDoc.name,
+        sent: singleDoc.sent,
+        validationFailed: singleDoc.validationGeneralFailed,
+        date: singleDoc.created,
       }))
     );
 
@@ -52,14 +56,14 @@ const DashboardPage: FC<DashboardPageProps> = ({ ...props }) => {
   const [inputValue, setInputValue] = useState('');
   const debouncedInputValue = useDebouncedValue(inputValue, 400);
 
-  const { data } = useQuery(['search', debouncedInputValue], fetchReports, {
+  const { data } = useQuery(['search', debouncedInputValue], () => fetchReports(debouncedInputValue[0]), {
     initialData: async () => [] as string[],
   });
 
   return (
     <PageContainer wide {...props}>
       <Wrapper>
-        <Heading>Zgłoszenia</Heading>
+        <Heading>Dokumenty</Heading>
         <ReportTable
           data={data}
           renderSearch={() => (

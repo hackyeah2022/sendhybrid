@@ -4,10 +4,14 @@ import styled from 'styled-components';
 
 import routes from 'utils/routes';
 import ArrowLeft from 'icons/ArrowLeft';
-import PageContainer from 'components/atoms/PageContainer/PageContainer';
+import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 import LoginForm from 'components/organisms/LoginForm/LoginForm';
 
 export interface LoginPageProps {}
+
+const PageContainer = styled(PageContainerBase)`
+  margin-top: -4rem;
+`;
 
 const GoBackWrapper = styled.div`
   display: flex;
