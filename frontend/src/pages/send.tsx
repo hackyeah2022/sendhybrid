@@ -8,12 +8,19 @@ import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 import FileInput from 'components/atoms/FileInput/FileInput';
 import Button from 'components/atoms/Button/Button';
 import Modal from 'components/atoms/Modal/Modal';
+import { CheckIcon } from '@mantine/core';
 
 export interface SendPageProps {}
 
 const PageContainer = styled(PageContainerBase)`
-  padding-top: 4rem;
-  gap: 1rem;
+  margin-top: -4rem;
+  gap: 2rem;
+`;
+
+const PageHeading = styled.h1`
+  width: 24rem;
+  font-size: 28px;
+  line-height: 1.15;
 `;
 
 const SendPage: FC<SendPageProps> = ({ ...props }) => {
@@ -28,12 +35,15 @@ const SendPage: FC<SendPageProps> = ({ ...props }) => {
       showNotification({
         title: 'Success!',
         message: 'Your document was uploaded successfully!',
-        color: theme.colors.accent[1],
+        color: 'green',
       });
   }, [uploadedSuccessfully]);
 
   return (
     <PageContainer centerContent {...props}>
+      <PageHeading>
+        Wybierz dokument, a my dostarczymy go jako list do odbiorcy!
+      </PageHeading>
       <FileInput
         selectedFile={selectedFile}
         setSelectedFile={setSelectedFile}
