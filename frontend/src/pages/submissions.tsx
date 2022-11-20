@@ -45,7 +45,7 @@ const fetchReports = (caseId?: string) =>
         id: singleDoc.id,
         name: singleDoc.name,
         sent: singleDoc.sent,
-        validationFailed: singleDoc.validationGeneralFailed,
+        validationGeneralFailed: singleDoc.validationGeneralFailed,
         date: singleDoc.created,
       }))
     );
@@ -70,7 +70,7 @@ const DashboardPage: FC<DashboardPageProps> = ({ ...props }) => {
             <SearchInput
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
-              placeholder="Wyszukaj plik"
+              placeholder="Wyszukaj plik po nr sprawy"
             />
           )}
         />

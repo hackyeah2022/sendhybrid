@@ -6,6 +6,7 @@ import api from 'utils/axios';
 const useUploadFile = () => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [body, setBody] = useState(null);
   const [uploadedSuccessfully, setUploadedSuccessfully] =
     useState<boolean>(false);
 
@@ -22,11 +23,14 @@ const useUploadFile = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress,
       })
-      .then(() => setUploadedSuccessfully(true))
+      .then((res) => {
+        setUploadedSuccessfully(true)
+        setBody(res.data)
+      })
       .catch(() => setErrorMessage('Error occurred!'));
   };
 
-  return { uploadFile, uploadProgress, errorMessage, uploadedSuccessfully };
+  return { uploadFile, uploadProgress, errorMessage, uploadedSuccessfully, responseBody: body };
 };
 
 export default useUploadFile;

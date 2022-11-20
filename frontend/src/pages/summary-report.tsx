@@ -12,6 +12,7 @@ import {ReportDetails} from "../types/report";
 import GoBack from "../components/atoms/GoBack/GoBack";
 import FeedbackMessage from "../components/atoms/FeedbackMessage/FeedbackMessage";
 import SingleReportCard from "../components/molecules/SummaryReport/SingleReportCard";
+import getFeedbackMessagesProps from "../lib/getFeedbackMessagesProps";
 
 const Wrapper = styled.div`
   padding-top: 1rem;
@@ -55,9 +56,10 @@ const SubHeading = styled.h4`
 
 const SingleReportWrapper = styled.div`
   border-radius: .25rem;
-  padding: 0.2rem 2rem;
+  padding: 0.2rem 0;
   &:nth-child(even) {
     background: rgba(0,0,0, 0.03);
+    color: black;
   }
 `
 
@@ -109,7 +111,7 @@ export default SummaryReportPage;
 
 
 export const getServerSideProps = async ({query}: GetServerSidePropsContext): GetServerSidePropsResult<{reportsDetails: ReportDetails[]}> => {
-    // const res = await fetch(`${environment.API_URL}/files/details/${reportId}`).then(res => res.json())
+    const reports = await fetch(`${environment.API_URL}/documents/getAll`).then(res => res.json())
     if (!query.ids || typeof query.ids !== 'string')
         return {
             props: {
@@ -118,20 +120,20 @@ export const getServerSideProps = async ({query}: GetServerSidePropsContext): Ge
         }
 
     const ids = query.ids.split(',')
+    const filteredReports = reports.filter(rep => ids.includes(rep.id))
+    console.log(filteredReports)
     return {
         props: {
             reportGenerationDate: new Date().toISOString(),
-            reportsDetails: ids.map((id) => ({
-                id: id,
-                name: id,
-                previewUrl: `${environment.API_URL}/files/content/asdsad`,
-                verificationDate: '2022-10-12',
-                fileSize: 4000,
-                errorsList: [
-                    'Some error',
-                    'Some error 2',
-                    'Some error 3',
-                ],
+            reportsDetails: filteredReports.map(res => ({
+                ...res,
+                id: res.id,
+                name: res.name ?? 'Brak nazwy',
+                isCorrectedFileAvailable: res.correctedFileId && res.correctedFileId.trim().length > 0,
+                originalPreviewUrl: `${environment.API_URL}/files/content/${res.originalFileId}`,
+                correctedPreviewUrl: `${environment.API_URL}/files/content/${res.correctedFileId}`,
+                verificationDate: res.created,
+                feedbackMessagesProps: getFeedbackMessagesProps(res),
             }))
         }
     }

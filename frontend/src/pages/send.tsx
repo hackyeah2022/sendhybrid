@@ -7,6 +7,7 @@ import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 import FileInput from 'components/atoms/FileInput/FileInput';
 import Button from 'components/atoms/Button/Button';
 import Modal from 'components/atoms/Modal/Modal';
+import {useRouter} from "next/router";
 
 export interface SendPageProps {}
 
@@ -22,19 +23,17 @@ const PageHeading = styled.h1`
 `;
 
 const SendPage: FC<SendPageProps> = ({ ...props }) => {
+    const router = useRouter()
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File>();
-  const { uploadFile, uploadProgress, errorMessage, uploadedSuccessfully } =
+  const { uploadFile, uploadProgress, errorMessage, uploadedSuccessfully, responseBody } =
     useUploadFile();
 
   useEffect(() => setIsModalOpened(!!errorMessage), [errorMessage]);
   useEffect(() => {
-    uploadedSuccessfully &&
-      showNotification({
-        title: 'Zgłoszenie przyjętę!',
-        message: 'Twój dokument został przesłany prawidłowo.',
-        color: 'green',
-      });
+    if(uploadedSuccessfully) {
+        router.push(`/submission-preview/${responseBody.id}`)
+    }
   }, [uploadedSuccessfully]);
 
   return (
