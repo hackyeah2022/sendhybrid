@@ -1,6 +1,7 @@
 import environment from '../environment';
 import { useQuery } from '@tanstack/react-query';
 import { ReportDetails } from '../types/report';
+import getFeedbackMessagesProps from "../lib/getFeedbackMessagesProps";
 
 export const getAllReportsQueryKey = (caseNumber?: string) => [
   `all-reports`,
@@ -15,6 +16,7 @@ const transformRes = res =>
     sent: singleDoc.sent,
     validationGeneralFailed: singleDoc.validationGeneralFailed,
     date: singleDoc.created,
+      feedbackMessagesProps: getFeedbackMessagesProps(res)
   }));
 
 export const fetchAllReports = (caseId?: string) =>

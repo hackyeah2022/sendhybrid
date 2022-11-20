@@ -15,6 +15,7 @@ import SingleReportCard from '../components/molecules/SummaryReport/SingleReport
 import getFeedbackMessagesProps from '../lib/getFeedbackMessagesProps';
 import allReportsGetServerSideProps from '../lib/allReportsGetServerSideProps';
 import useAllReports from '../hooks/useAllReports';
+import {useRouter} from "next/router";
 
 const Wrapper = styled.div`
   padding-top: 1rem;
@@ -68,7 +69,8 @@ const reportGenerationDate = new Date();
 
 export interface SummaryReportPageProps {}
 
-const SummaryReportPage: FC<SummaryReportPageProps> = ({ query, ...props }) => {
+const SummaryReportPage: FC<SummaryReportPageProps> = ({ ...props }) => {
+  const { query } = useRouter()
   const ids = query.ids.split(',');
   const { data } = useAllReports();
   const filteredReports = data.filter(rep => ids.includes(rep.id));

@@ -84,6 +84,7 @@ const SingleReportCard: FC<SingleReportCardProps> = ({ reportDetails }) => {
     ? reportDetails.correctedPreviewUrl
     : reportDetails.originalPreviewUrl;
   console.log(reportDetails);
+  // return null
   return (
     <Wrapper>
       <div>
@@ -91,7 +92,7 @@ const SingleReportCard: FC<SingleReportCardProps> = ({ reportDetails }) => {
         <span>
           ID pliku: {reportDetails.id} <br />
           Data weryfikacji:{' '}
-          {new Date(reportDetails.verificationDate).toLocaleString()} <br />
+          {new Date().toLocaleString()} <br />
         </span>
         <AddressesGrid>
           <div>
