@@ -2,6 +2,7 @@ import { FC } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import { useGlobalState } from 'utils/store';
 import routes from 'utils/routes';
 import Button from 'components/atoms/Button/Button';
 
@@ -122,7 +123,8 @@ export interface Props {}
 
 const NavBar: FC<Props> = ({ ...props }) => {
   const router = useRouter();
-  const isLoggedIn = true;
+  const [userRole] = useGlobalState('userRole');
+  const isLoggedIn = userRole !== 'guest';
   return (
     <S.Wrapper {...props}>
       <LeftSideWrapper>

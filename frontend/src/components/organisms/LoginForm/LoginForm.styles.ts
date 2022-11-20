@@ -20,6 +20,7 @@ export const Input = styled.input`
   height: 2rem;
   border: 1px solid ${({ theme }) => theme.colors.neutral[2]};
   border-radius: 0.25rem;
+  padding: 0 0.75rem;
 
   &:focus {
     border: none;

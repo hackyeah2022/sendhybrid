@@ -455,6 +455,7 @@ __metadata:
     react-dom: 18.2.0
     react-dropzone: ^14.2.3
     react-hook-form: ^7.39.4
+    react-hooks-global-state: ^2.0.0
     react-paginate: ^8.1.4
     react-pdf: ^6.1.0
     styled-components: ^5.3.6
@@ -3284,6 +3285,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hooks-global-state@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "react-hooks-global-state@npm:2.0.0"
+  dependencies:
+    zustand: 4.0.0
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 8e45f5ef685bab6f2b33c31bafd1b390eb6394ca54f5a0a97a85df3e25b6c83ac4f8994c381352d150fa9ffd605c0df9d986678b0709047d171032768f7d1f63
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1, react-is@npm:^16.7.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -3967,5 +3979,22 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: f77b3d8d00310def622123df93d4ee654fc6a0096182af8bd60679ddcdfb3474c56c6c7190817c84a2785648cdee9d721c0154eb45698c62176c322fb46fc700
+  languageName: node
+  linkType: hard
+
+"zustand@npm:4.0.0":
+  version: 4.0.0
+  resolution: "zustand@npm:4.0.0"
+  dependencies:
+    use-sync-external-store: 1.2.0
+  peerDependencies:
+    immer: ">=9.0"
+    react: ">=16.8"
+  peerDependenciesMeta:
+    immer:
+      optional: true
+    react:
+      optional: true
+  checksum: b8ae5971dff79a1007d46f9a6bfa39ed5cc5b101a877eeec069ebdb6c8285ec8e3463e40cfa7c0f1507a41f43fe26ffb44b556063cb70ac03bccf1ea6e0f69d6
   languageName: node
   linkType: hard
