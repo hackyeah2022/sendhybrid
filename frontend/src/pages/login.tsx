@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import styled from 'styled-components';
 
 import routes from 'utils/routes';
@@ -36,19 +37,43 @@ const BackArrowWrapper = styled.div`
   transition: transform 200ms;
 `;
 
+const LogoWrapper = styled.div`
+  position: relative;
+  top: 1rem;
+  width: 10rem;
+  height: 10rem;
+  transform: scale(3.5);
+`;
+
+const LogoImage = styled(Image)`
+  object-fit: cover;
+`;
+
+const PageContentWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 11rem;
+`;
+
 const LoginPage: FC<LoginPageProps> = ({ ...props }) => {
   const router = useRouter();
   return (
     <PageContainer centerContent {...props}>
-      <div>
-        <GoBackWrapper onClick={() => router.push(routes.LANDING)}>
-          <BackArrowWrapper>
-            <ArrowLeft />
-          </BackArrowWrapper>
-          <span>Powrót do strony głównej</span>
-        </GoBackWrapper>
-        <LoginForm />
-      </div>
+      <PageContentWrapper>
+        <div>
+          <GoBackWrapper onClick={() => router.push(routes.LANDING)}>
+            <BackArrowWrapper>
+              <ArrowLeft />
+            </BackArrowWrapper>
+            <span>Powrót do strony głównej</span>
+          </GoBackWrapper>
+          <LoginForm />
+        </div>
+        <LogoWrapper>
+          <LogoImage src="/logo.png" layout="fill" />
+        </LogoWrapper>
+      </PageContentWrapper>
     </PageContainer>
   );
 };

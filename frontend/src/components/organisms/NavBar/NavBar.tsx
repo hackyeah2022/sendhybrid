@@ -1,14 +1,15 @@
 import { FC } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { Menu } from '@headlessui/react';
+import styled from 'styled-components';
 
 import { useGlobalState } from 'utils/store';
 import routes from 'utils/routes';
 import Button from 'components/atoms/Button/Button';
 
 import * as S from './NavBar.styles';
-import styled from 'styled-components';
-import { Menu } from '@headlessui/react';
+import { variants } from './NavBar.motion';
 import UserCircle from '../../../icons/UserCircle';
 
 const Logo = styled.img`
@@ -126,7 +127,12 @@ const NavBar: FC<Props> = ({ ...props }) => {
   const [userRole] = useGlobalState('userRole');
   const isLoggedIn = userRole !== 'guest';
   return (
-    <S.Wrapper {...props}>
+    <S.Wrapper
+      initial="hidden"
+      animate="visible"
+      variants={variants}
+      {...props}
+    >
       <LeftSideWrapper>
         <Link href="/" passHref legacyBehavior>
           <a>
@@ -148,7 +154,9 @@ const NavBar: FC<Props> = ({ ...props }) => {
       </LeftSideWrapper>
       {router.pathname !== routes.LOGIN && !isLoggedIn && (
         <Link href={routes.LOGIN} passHref legacyBehavior>
-          <Button as="a">Login</Button>
+          <Button as="a" smallPadding>
+            Zaloguj się
+          </Button>
         </Link>
       )}
       {isLoggedIn && <UserDropdown name="Jan Kowalski" />}

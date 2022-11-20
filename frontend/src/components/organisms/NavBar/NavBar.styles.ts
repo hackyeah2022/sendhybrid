@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-export const Wrapper = styled.nav`
+export const Wrapper = styled(motion.nav)`
   position: fixed;
   inset: 0 0 auto 0;
   height: ${({ theme }) => theme.layout.navBarHeight};
