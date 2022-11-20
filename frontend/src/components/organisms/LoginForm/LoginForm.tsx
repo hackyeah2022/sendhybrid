@@ -24,13 +24,12 @@ const LoginForm: FC<Props> = ({ ...props }) => {
   } = useForm<FormData>();
   const [, setUserRole] = useGlobalState('userRole');
   const onSubmit = handleSubmit(({ username, password }) => {
-    if (username === 'user' && password === 'user1234') {
+    if (username === 'jankowalski' && password === '1234') {
       setUserRole('privileged');
       router.push(routes.SUBMISSIONS);
-    }
-    if (username === 'admin' && password === 'admin1234') {
+    } else if (username === 'administrator' && password === '1234') {
       setUserRole('admin');
-      router.push(routes.SUBMISSIONS);
+      router.push(routes.ADMIN_DASHBOARD);
     } else if (!!username && !!password) {
       showNotification({
         title: 'Błąd!',

@@ -6,6 +6,7 @@ import routes from 'utils/routes';
 import ArrowLeft from 'icons/ArrowLeft';
 import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 import LoginForm from 'components/organisms/LoginForm/LoginForm';
+import Logo from 'components/atoms/Logo/Logo';
 
 export interface LoginPageProps {}
 
@@ -36,19 +37,29 @@ const BackArrowWrapper = styled.div`
   transition: transform 200ms;
 `;
 
+const PageContentWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 11rem;
+`;
+
 const LoginPage: FC<LoginPageProps> = ({ ...props }) => {
   const router = useRouter();
   return (
     <PageContainer centerContent {...props}>
-      <div>
-        <GoBackWrapper onClick={() => router.push(routes.LANDING)}>
-          <BackArrowWrapper>
-            <ArrowLeft />
-          </BackArrowWrapper>
-          <span>Powrót do strony głównej</span>
-        </GoBackWrapper>
-        <LoginForm />
-      </div>
+      <PageContentWrapper>
+        <div>
+          <GoBackWrapper onClick={() => router.push(routes.LANDING)}>
+            <BackArrowWrapper>
+              <ArrowLeft />
+            </BackArrowWrapper>
+            <span>Powrót do strony głównej</span>
+          </GoBackWrapper>
+          <LoginForm />
+        </div>
+        <Logo />
+      </PageContentWrapper>
     </PageContainer>
   );
 };

@@ -2,6 +2,15 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
 export const Wrapper = styled(motion.div)`
+  position: relative;
+  width: 24rem;
+  height: 16rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const DropzoneWrapper = styled(motion.div)`
   width: 24rem;
   height: 16rem;
   display: flex;
@@ -48,4 +57,22 @@ export const SelectedFileWrapper = styled(motion.div)`
   align-items: center;
   gap: 0.25rem;
   color: ${({ theme }) => theme.colors.neutral[1]};
+`;
+
+export const RemoveFileButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  left: calc(50% - 1rem);
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  border: none;
+  outline: none;
+  background: none;
+  color: ${({ theme }) => theme.colors.neutral[4]};
+
+  &:hover {
+    cursor: pointer;
+  }
 `;

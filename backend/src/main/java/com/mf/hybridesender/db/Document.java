@@ -23,6 +23,25 @@ public class Document {
     private String correctedFileId;
 
     private String caseNumber;
+    private String epuap;
+
+    public String getEpuap() {
+        return epuap;
+    }
+
+    public void setEpuap(String epuap) {
+        this.epuap = epuap;
+    }
+
+    public String getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+
+    private String contactPerson;
 
     private String receiverName;
     private String receiverSurname;
@@ -45,6 +64,33 @@ public class Document {
     private boolean validationFormFieldsFailed;
     private boolean validationCMYKFailed;
     private boolean validationFontsFailed;
+    private boolean validationSenderAddressFailed;
+    private boolean validationReceiverAddressFailed;
+    private boolean validationFilenameFailed;
+
+    public boolean isValidationFilenameFailed() {
+        return validationFilenameFailed;
+    }
+
+    public void setValidationFilenameFailed(boolean validationFilenameFailed) {
+        this.validationFilenameFailed = validationFilenameFailed;
+    }
+
+    public boolean isValidationSenderAddressFailed() {
+        return validationSenderAddressFailed;
+    }
+
+    public void setValidationSenderAddressFailed(boolean validationSenderAddressFailed) {
+        this.validationSenderAddressFailed = validationSenderAddressFailed;
+    }
+
+    public boolean isValidationReceiverAddressFailed() {
+        return validationReceiverAddressFailed;
+    }
+
+    public void setValidationReceiverAddressFailed(boolean validationReceiverAddressFailed) {
+        this.validationReceiverAddressFailed = validationReceiverAddressFailed;
+    }
 
     private boolean sent;
 

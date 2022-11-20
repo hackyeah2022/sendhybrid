@@ -1,5 +1,6 @@
 package com.mf.hybridesender.services;
 
+import com.mf.hybridesender.db.Document;
 import com.mf.hybridesender.repositories.FileRepository;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -10,7 +11,6 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.pdfbox.util.Matrix;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.codec.binary.StringUtils;
 import org.bouncycastle.asn1.cms.Attribute;
@@ -21,12 +21,10 @@ import org.bouncycastle.tsp.TimeStampToken;
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.bouncycastle.cms.CMSSignedData;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -53,7 +51,7 @@ public class PdfReader {
     }
 
 
-    public String senderData(String fileId) {
+    public String fillSenderAndReceiverData(String fileId, Document document) {
         byte[] fileBytes = fileRepository.getById(fileId).getData();
         try (PDDocument doc = PDDocument.load(fileBytes)) {
 
@@ -97,6 +95,7 @@ public class PdfReader {
 
                 senderNameOfDocument = parsedText.substring(0,matcherPlaceDate.start()-1).replace(NEW_LINE,"").replace(NEW_LINE_WINDOWS,"").trim();
                 log.info ("Sender of document: {}", senderNameOfDocument);
+                document.setSenderName(senderNameOfDocument);
             } else {
                 log.error("Place and Date of document issue not found.");
             }
@@ -124,6 +123,7 @@ public class PdfReader {
             if (matcherCase.find()) {
                 caseName = matcherCase.group(1).trim();
                 log.info ("Case name: {}", caseName);
+                document.setName(caseName);
             } else {
                 log.error("Case details not found.");
             }
@@ -133,6 +133,7 @@ public class PdfReader {
             if (matcherCaseNumber.find()) {
                 caseNumber = matcherCaseNumber.group(1).trim();
                 log.info ("Case number: {}", caseNumber);
+                document.setCaseNumber(caseNumber);
             } else {
                 log.error("Case number details not found.");
             }
@@ -147,35 +148,43 @@ public class PdfReader {
             Pattern patternPostalCodePl = Pattern.compile("[0-9][0-9]-[0-9][0-9][0-9]");
             Pattern patternPageOrAddressNumber = Pattern.compile("[0-9]+/[0-9]+");
             Matcher matcherPageOrAddressNumber = patternPageOrAddressNumber.matcher(new StringBuilder(parsedText).reverse());
+            int pageEnd = 0;
             if (matcherPageOrAddressNumber.find()) {
-                int pageEnd = matcherPageOrAddressNumber.end();
-                String[] linedData = parsedText.substring(0,parsedText.length()-pageEnd).trim().split("\n");
-                String[] lastLine = linedData[linedData.length-1].split(COLLON);
-                if (lastLine.length == 3) {
-                    sender = lastLine[0].trim();
-                    log.info("Sender {}", sender);
-                    String postalAndCity = lastLine[2].trim();
-                    Matcher postalSender = patternPostalCodePl.matcher(postalAndCity);
-                    int postalEnd = 0;
-                    if (postalSender.find()) {
-                        senderPostal = postalSender.group();
-                        postalEnd = postalSender.end();
-                        log.info("Sender postal code: {}", senderPostal);
-                    } else {
-                        log.error("Not proper postal address");
-                    }
-                    senderCity = postalAndCity.substring(postalEnd).trim();
-                    String[] address = parseAddress(lastLine[1]);
-                    senderStreet = address[0];
-                    senderBuilding = address[1];
-                    senderFlat = address[2];
-                    log.info("Sender City: {}", senderCity);
-                    //log.info ("Case number: {}", x);
-                } else {
-                    log.error("Not proper length for sender data");
+                pageEnd = matcherPageOrAddressNumber.end();
+                if (pageEnd > 15) {
+                    pageEnd = 0;
                 }
+            }
+            String[] linedData = parsedText.substring(0,parsedText.length()-pageEnd).trim().split("\n");
+            String[] lastLine = linedData[linedData.length-1].split(COLLON);
+            if (lastLine.length == 3) {
+                sender = lastLine[0].trim();
+                log.info("Sender {}", sender);
+                document.setSenderSurname(sender);
+                String postalAndCity = lastLine[2].trim();
+                Matcher postalSender = patternPostalCodePl.matcher(postalAndCity);
+                int postalEnd = 0;
+                if (postalSender.find()) {
+                    senderPostal = postalSender.group();
+                    document.setSenderZipcode(senderPostal);
+                    postalEnd = postalSender.end();
+                    log.info("Sender postal code: {}", senderPostal);
+                } else {
+                    log.error("Not proper postal address");
+                }
+                senderCity = postalAndCity.substring(postalEnd).trim();
+                String[] address = parseAddress(lastLine[1]);
+                senderStreet = address[0];
+                document.setSenderStreet(senderStreet);
+                senderBuilding = address[1];
+                document.setSenderHouseNumber(senderBuilding);
+                senderFlat = address[2];
+                document.setSenderFlatNumber(senderFlat);
+                log.info("Sender City: {}", senderCity);
+                document.setSenderCity(senderCity);
+                //log.info ("Case number: {}", x);
             } else {
-                log.error("Case number details not found.");
+                log.error("Not proper length for sender data");
             }
 
             Pattern patternPostalCodePlWithCity = Pattern.compile("[0-9][0-9]-[0-9][0-9][0-9] [a-zA-Z]+");
@@ -184,7 +193,9 @@ public class PdfReader {
             if (matcherPostalReceiver.find()) {
                 String[] receiverPostalAndCity = matcherPostalReceiver.group(0).split(SPACE);
                 receiverCity = receiverPostalAndCity[1].trim();
+                document.setReceiverCity(receiverCity);
                 receiverPostal = receiverPostalAndCity[0].trim();
+                document.setReceiverZipcode(receiverPostal);
                 intermediateReceiverStart = matcherPostalReceiver.start();
                 int lineNumber = parsedText.substring(0,matcherPostalReceiver.end()).split(NEW_LINE).length;
                 String[] linedPage = parsedText.split(NEW_LINE);
@@ -205,14 +216,27 @@ public class PdfReader {
                     receiverBuilding = parsePossibleAddress1[1];
                     receiverFlat = parsePossibleAddress1[2];
                 }
+                document.setReceiverStreet(receiverStreet);
+                document.setReceiverHouseNumber(receiverBuilding);
+                document.setReceiverFlatNumber(receiverFlat);
 
                 String[] receiverNameArray = new String[2];
-                receiverNameArray[0] = linedPage[lineNumber-2];
+
+
+                Pattern patternEndContact = Pattern.compile("(\\+|@)");
+                Matcher matcherEndContact = patternEndContact.matcher(parsedText);
+                if (!matcherEndContact.find()) {
+                    receiverNameArray[0] = linedPage[lineNumber - 2];
+                } else {
+                    receiverNameArray[0] = "";
+                }
                 receiverNameArray[1] = linedPage[lineNumber-1];
                 String receiverName = String.join("", receiverNameArray).replace(NEW_LINE, "").replace(NEW_LINE_WINDOWS, "").trim();
                 String[] receiverNameArray2 = receiverName.split(SPACE);
                 receiver = receiverNameArray2[0];
+                document.setReceiverName(receiver);
                 receiver2 = receiverNameArray2[1];
+                document.setReceiverSurname(receiver2);
                 int x = 1;
             } else {
                 log.error("Receiver city/postal not found. Receiver not found");
@@ -268,7 +292,7 @@ public class PdfReader {
                 return true;
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+           log.error("Cannot decrypt PDF");
         }
         return false;
     }

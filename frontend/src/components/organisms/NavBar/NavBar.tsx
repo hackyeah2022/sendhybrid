@@ -1,14 +1,15 @@
 import { FC } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { NextRouter, useRouter } from 'next/router';
+import { Menu } from '@headlessui/react';
+import styled from 'styled-components';
 
-import { useGlobalState } from 'utils/store';
+import { useGlobalState, UserRole } from 'utils/store';
 import routes from 'utils/routes';
 import Button from 'components/atoms/Button/Button';
 
 import * as S from './NavBar.styles';
-import styled from 'styled-components';
-import { Menu } from '@headlessui/react';
+import { variants } from './NavBar.motion';
 import UserCircle from '../../../icons/UserCircle';
 
 const Logo = styled.img`
@@ -90,7 +91,15 @@ const SpecialNavBarItem = styled.a`
   margin: 0 1rem;
 `;
 
-const UserDropdown = ({ name }: any) => (
+const UserDropdown = ({
+  name,
+  setUserRole,
+  router,
+}: {
+  name: string;
+  setUserRole: (role: UserRole) => void;
+  router: NextRouter;
+}) => (
   <DropdownWrapper>
     <Menu>
       <DropdownButton>
@@ -101,7 +110,10 @@ const UserDropdown = ({ name }: any) => (
       <Dropdown>
         <Menu.Item>
           <Link href="/user-profile">
-            <DropdownMenuItem>Profil użytkownika</DropdownMenuItem>
+            <DropdownMenuItem>
+              Profil{' '}
+              {name === 'Administrator' ? 'administratora' : 'użytkownika'}
+            </DropdownMenuItem>
           </Link>
         </Menu.Item>
         <Menu.Item>
@@ -110,9 +122,16 @@ const UserDropdown = ({ name }: any) => (
           </Link>
         </Menu.Item>
         <Menu.Item>
-          <Link href="/sign-out">
-            <DropdownMenuItem>Wyloguj</DropdownMenuItem>
-          </Link>
+          <DropdownMenuItem
+            onClick={() => {
+              setUserRole('guest');
+              router.push(routes.LANDING);
+            }}
+            as="button"
+            style={{ width: '100%' }}
+          >
+            Wyloguj
+          </DropdownMenuItem>
         </Menu.Item>
       </Dropdown>
     </Menu>
@@ -123,35 +142,58 @@ export interface Props {}
 
 const NavBar: FC<Props> = ({ ...props }) => {
   const router = useRouter();
-  const [userRole] = useGlobalState('userRole');
+  const [userRole, setUserRole] = useGlobalState('userRole');
   const isLoggedIn = userRole !== 'guest';
   return (
-    <S.Wrapper {...props}>
+    <S.Wrapper
+      initial="hidden"
+      animate="visible"
+      variants={variants}
+      {...props}
+    >
       <LeftSideWrapper>
         <Link href="/" passHref legacyBehavior>
           <a>
             <Logo src="/KAS_logo.jpg" />
           </a>
         </Link>
-        {isLoggedIn && (
+        {isLoggedIn && userRole === 'privileged' && (
           <Link href="/send" passHref legacyBehavior>
             <SpecialNavBarItem>Wyślij nowy dokument</SpecialNavBarItem>
           </Link>
         )}
-        {isLoggedIn && (
+        {isLoggedIn && userRole === 'privileged' && (
           <>
             <Link href="/submissions" passHref legacyBehavior>
               <NavLink>Dokumenty</NavLink>
             </Link>
           </>
         )}
+        {isLoggedIn && userRole === 'admin' && (
+          <>
+            <Link href="/admin/dashboard" passHref legacyBehavior>
+              <NavLink>Panel administratora</NavLink>
+            </Link>
+            <Link href="/admin/settings" passHref legacyBehavior>
+              <NavLink>Ustawienia</NavLink>
+            </Link>
+          </>
+        )}
       </LeftSideWrapper>
       {router.pathname !== routes.LOGIN && !isLoggedIn && (
         <Link href={routes.LOGIN} passHref legacyBehavior>
-          <Button as="a">Login</Button>
+          <Button as="a" smallPadding>
+            Zaloguj się
+          </Button>
         </Link>
       )}
-      {isLoggedIn && <UserDropdown name="Jan Kowalski" />}
+      {isLoggedIn && (
+        <UserDropdown
+          name={userRole === 'privileged' ? 'Jan Kowalski' : 'Administrator'}
+          setUserRole={setUserRole}
+          router={router}
+        />
+      )}
     </S.Wrapper>
   );
 };

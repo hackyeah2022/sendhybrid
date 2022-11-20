@@ -29,6 +29,7 @@
     "react-pdf": "^6.1.0",
     "react-spinners": "^0.13.6",
     "styled-components": "^5.3.6",
+    "victory": "^36.6.8",
     "wretch": "^2.1.5"
   },
   "devDependencies": {

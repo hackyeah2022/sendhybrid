@@ -1,9 +1,13 @@
 import { createGlobalState } from 'react-hooks-global-state';
 
+export type UserRole = 'guest' | 'privileged' | 'admin';
+
 type Store = {
-  userRole: 'guest' | 'privileged' | 'admin';
+  userRole: UserRole;
 };
 
-const { useGlobalState } = createGlobalState<Store>({ userRole: 'guest' });
+const { useGlobalState, setGlobalState } = createGlobalState<Store>({
+  userRole: 'guest',
+});
 
-export { useGlobalState };
+export { useGlobalState, setGlobalState };

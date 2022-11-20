@@ -3,6 +3,7 @@ import Head from 'next/head';
 import styled from 'styled-components';
 
 import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
+import Logo from 'components/atoms/Logo/Logo';
 
 export interface LandingPageProps {}
 
@@ -18,12 +19,19 @@ const VerticalLine = styled.div`
 `;
 
 const AppInfo = styled.p`
+  width: 24rem;
   color: ${({ theme }) => theme.colors.neutral[4]};
 `;
 
 const PageHeading = styled.h1`
   font-size: 64px;
   color: ${({ theme }) => theme.colors.primary[3]};
+`;
+
+const HorizontalRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 `;
 
 const Landing: FC<LandingPageProps> = () => {
@@ -35,12 +43,18 @@ const Landing: FC<LandingPageProps> = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <PageHeading>StampIT</PageHeading>
-      <VerticalLine />
-      <AppInfo>
-        StampIT pozwala na lorem ipsum dolor sit amet. StampIT pozwala na lorem
-        ipsum dolor sit amet. StampIT pozwala na lorem ipsum dolor sit amet.
-      </AppInfo>
+      <HorizontalRow>
+        <div>
+          <PageHeading>StampIT</PageHeading>
+          <VerticalLine />
+          <AppInfo>
+            Dzięki <strong>StampIT</strong> możesz wysłać dokument tekstowy w
+            wielu formatach, który zostanie dostarczony do odbiorcy, jako
+            papierowy list! <i>#GoHybrid</i>
+          </AppInfo>
+        </div>
+        <Logo />
+      </HorizontalRow>
     </PageContainer>
   );
 };
