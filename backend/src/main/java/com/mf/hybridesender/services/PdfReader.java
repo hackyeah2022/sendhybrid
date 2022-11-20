@@ -36,18 +36,203 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class PdfReader {
 
     Logger log = LoggerFactory.getLogger(PdfReader.class);
     private final FileRepository fileRepository;
+    private final static String PATTERN_FOR_PLACE_DATE = "^.*,.*roku";
+    private final static String COLLON = ",";
+    private final static String NEW_LINE_WINDOWS = "\r";
+    private final static String NEW_LINE = "\n";
+    private final static String SPACE = " ";
 
     public PdfReader(FileRepository fileRepository) {
         this.fileRepository = fileRepository;
     }
 
 
+    public String senderData(String fileId) {
+        byte[] fileBytes = fileRepository.getById(fileId).getData();
+        try (PDDocument doc = PDDocument.load(fileBytes)) {
+
+            String placeOfDocument;
+            String dateOfDocument;
+            String senderNameOfDocument;
+            String sender;
+            String senderStreet;
+            String senderBuilding;
+            String senderFlat;
+            String senderPostal;
+            String senderCity;
+
+            String receiver;
+            String receiver2;
+            String receiverStreet;
+            String receiverBuilding;
+            String receiverFlat;
+            String receiverPostal;
+            String receiverCity;
+
+            String contactName;
+            String unp;
+            String caseName;
+            String caseNumber;
+            String epuap;
+
+            PDFTextStripper pdfStripper = new PDFTextStripper();
+            pdfStripper.setSortByPosition(true);
+            pdfStripper.setStartPage(1);
+            pdfStripper.setEndPage(1);
+            String parsedText = pdfStripper.getText(doc);
+
+            Pattern patternPlaceDate = Pattern.compile(PATTERN_FOR_PLACE_DATE, Pattern.MULTILINE);
+            Matcher matcherPlaceDate = patternPlaceDate.matcher(parsedText);
+            if (matcherPlaceDate.find()) {
+                String[] placeAndDate = matcherPlaceDate.group(0).split(COLLON);
+                placeOfDocument = placeAndDate[0];
+                dateOfDocument = placeAndDate[1];
+                log.info ("Document issue date: {}, place: {}", placeOfDocument, dateOfDocument);
+
+                senderNameOfDocument = parsedText.substring(0,matcherPlaceDate.start()-1).replace(NEW_LINE,"").replace(NEW_LINE_WINDOWS,"").trim();
+                log.info ("Sender of document: {}", senderNameOfDocument);
+            } else {
+                log.error("Place and Date of document issue not found.");
+            }
+
+            Pattern patternContact = Pattern.compile("Kontakt:(.*)");
+            Matcher matcherContact = patternContact.matcher(parsedText);
+            if (matcherContact.find()) {
+                contactName = matcherContact.group(1).trim();
+                log.info ("Contact name: {}", contactName);
+            } else {
+                log.error("Contact details not found.");
+            }
+
+            Pattern patternUnp = Pattern.compile("UNP:(.*)");
+            Matcher matcherUnp = patternUnp.matcher(parsedText);
+            if (matcherUnp.find()) {
+                unp = matcherUnp.group(1).trim();
+                log.info ("UNP: {}", unp);
+            } else {
+                log.error("UNP details not found.");
+            }
+
+            Pattern patternCase = Pattern.compile("Sprawa:(.*)");
+            Matcher matcherCase = patternCase.matcher(parsedText);
+            if (matcherCase.find()) {
+                caseName = matcherCase.group(1).trim();
+                log.info ("Case name: {}", caseName);
+            } else {
+                log.error("Case details not found.");
+            }
+
+            Pattern patternCaseNumber = Pattern.compile("Znak sprawy:(.*)");
+            Matcher matcherCaseNumber = patternCaseNumber.matcher(parsedText);
+            if (matcherCaseNumber.find()) {
+                caseNumber = matcherCaseNumber.group(1).trim();
+                log.info ("Case number: {}", caseNumber);
+            } else {
+                log.error("Case number details not found.");
+            }
+            Pattern patternEpuap = Pattern.compile("ePUAP(.*)");
+            Matcher matcherEpuap = patternEpuap.matcher(parsedText);
+            if (matcherEpuap.find()) {
+                epuap = matcherEpuap.group(1).trim().split(SPACE)[0].trim();
+                log.info ("ePuap: {}", epuap);
+            } else {
+                log.error("ePuap details not found.");
+            }
+            Pattern patternPostalCodePl = Pattern.compile("[0-9][0-9]-[0-9][0-9][0-9]");
+            Pattern patternPageOrAddressNumber = Pattern.compile("[0-9]+/[0-9]+");
+            Matcher matcherPageOrAddressNumber = patternPageOrAddressNumber.matcher(new StringBuilder(parsedText).reverse());
+            if (matcherPageOrAddressNumber.find()) {
+                int pageEnd = matcherPageOrAddressNumber.end();
+                String[] linedData = parsedText.substring(0,parsedText.length()-pageEnd).trim().split("\n");
+                String[] lastLine = linedData[linedData.length-1].split(COLLON);
+                if (lastLine.length == 3) {
+                    sender = lastLine[0].trim();
+                    log.info("Sender {}", sender);
+                    String postalAndCity = lastLine[2].trim();
+                    Matcher postalSender = patternPostalCodePl.matcher(postalAndCity);
+                    int postalEnd = 0;
+                    if (postalSender.find()) {
+                        senderPostal = postalSender.group();
+                        postalEnd = postalSender.end();
+                        log.info("Sender postal code: {}", senderPostal);
+                    } else {
+                        log.error("Not proper postal address");
+                    }
+                    senderCity = postalAndCity.substring(postalEnd).trim();
+                    String[] address = parseAddress(lastLine[1]);
+                    senderStreet = address[0];
+                    senderBuilding = address[1];
+                    senderFlat = address[2];
+                    log.info("Sender City: {}", senderCity);
+                    //log.info ("Case number: {}", x);
+                } else {
+                    log.error("Not proper length for sender data");
+                }
+            } else {
+                log.error("Case number details not found.");
+            }
+
+            Pattern patternPostalCodePlWithCity = Pattern.compile("[0-9][0-9]-[0-9][0-9][0-9] [a-zA-Z]+");
+            Matcher matcherPostalReceiver = patternPostalCodePlWithCity.matcher(parsedText);
+            int intermediateReceiverStart = 0;
+            if (matcherPostalReceiver.find()) {
+                String[] receiverPostalAndCity = matcherPostalReceiver.group(0).split(SPACE);
+                receiverCity = receiverPostalAndCity[1].trim();
+                receiverPostal = receiverPostalAndCity[0].trim();
+                intermediateReceiverStart = matcherPostalReceiver.start();
+                int lineNumber = parsedText.substring(0,matcherPostalReceiver.end()).split(NEW_LINE).length;
+                int num = 1;
+            } else {
+                log.error("Receiver city/postal not found. Receiver not found");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    private String[] parseAddress(String address) {
+        String[] returnAddress = new String[3];
+
+        Pattern patternExceptLocal = Pattern.compile(".*/");
+        Matcher matcherExceptLocal = patternExceptLocal.matcher(address);
+        int withOutLocalEnd = address.length();
+        if (matcherExceptLocal.find()) {
+            withOutLocalEnd = matcherExceptLocal.end() - 1;
+            if (matcherExceptLocal.end() != address.length()) {
+                String local = address.substring(withOutLocalEnd+1).trim();
+                returnAddress[2] = local;
+            } else {
+                log.error("No local information.");
+            }
+        } else {
+            log.error("No local information.");
+        }
+        address = address.substring(0, withOutLocalEnd);
+        String[] addressSplit = address.split(SPACE);
+        if (addressSplit.length >2) {
+            Pattern patternOnlyNumber = Pattern.compile("[0-9]+");
+            Matcher matcherOnlyNumber = patternOnlyNumber.matcher(addressSplit[addressSplit.length-2]);
+            int streetEnd = address.length() - addressSplit[addressSplit.length - 1].length();
+            if (matcherOnlyNumber.matches()) {
+                streetEnd = matcherOnlyNumber.start() - 1;
+            }
+            returnAddress[0] = address.substring(0,streetEnd).trim();
+            returnAddress[1] = address.substring(streetEnd+1).trim();
+            log.info("Address info Street {}, Building {}, Local {}", returnAddress);
+        } else {
+            log.error("Address not valid");
+        }
+        return returnAddress;
+    }
     public boolean checkIfPdf(String fileId) {
         byte[] fileBytes = fileRepository.getById(fileId).getData();
         try (PDDocument doc = PDDocument.load(fileBytes)) {

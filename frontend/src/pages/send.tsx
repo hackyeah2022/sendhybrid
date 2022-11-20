@@ -3,12 +3,10 @@ import { FC, useEffect, useState } from 'react';
 import { showNotification } from '@mantine/notifications';
 
 import useUploadFile from 'hooks/useUploadFile';
-import theme from 'utils/styled/theme';
 import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 import FileInput from 'components/atoms/FileInput/FileInput';
 import Button from 'components/atoms/Button/Button';
 import Modal from 'components/atoms/Modal/Modal';
-import { CheckIcon } from '@mantine/core';
 
 export interface SendPageProps {}
 
@@ -33,8 +31,8 @@ const SendPage: FC<SendPageProps> = ({ ...props }) => {
   useEffect(() => {
     uploadedSuccessfully &&
       showNotification({
-        title: 'Success!',
-        message: 'Your document was uploaded successfully!',
+        title: 'Zgłoszenie przyjętę!',
+        message: 'Twój dokument został przesłany prawidłowo.',
         color: 'green',
       });
   }, [uploadedSuccessfully]);
@@ -42,7 +40,7 @@ const SendPage: FC<SendPageProps> = ({ ...props }) => {
   return (
     <PageContainer centerContent {...props}>
       <PageHeading>
-        Wybierz dokument, a my dostarczymy go jako list do odbiorcy!
+        Wybierz dokument, a my dostarczymy go do odbiorcy w formie listu!
       </PageHeading>
       <FileInput
         selectedFile={selectedFile}
