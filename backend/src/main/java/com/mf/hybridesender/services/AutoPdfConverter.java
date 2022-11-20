@@ -40,18 +40,20 @@ public class AutoPdfConverter {
         }
     }
 
-    public void convertFromWordtoPDF2(String fileId) {
+    public byte[] convertFromWordtoPDF2(String fileId) {
         byte[] fileBytes = fileRepository.getById(fileId).getData();
         try {
             InputStream in = new ByteArrayInputStream(fileBytes);
-            OutputStream out = new FileOutputStream(new File("C:\\Users\\m.skala\\Documents\\MtgMin.pdf"));
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
             IConverter converter = LocalConverter.builder().build();
             converter.convert(in).as(DocumentType.DOCX).to(out).as(DocumentType.PDF).execute();
             out.close();
+            return out.toByteArray();
 
         } catch (Exception e) {
             log.error("Error during convertion", e);
         }
+        return new byte[0];
     }
 /*
     public void convertFromOdtToPDF(String fileId) {

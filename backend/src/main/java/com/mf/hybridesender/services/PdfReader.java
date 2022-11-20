@@ -123,6 +123,7 @@ public class PdfReader {
             if (matcherCase.find()) {
                 caseName = matcherCase.group(1).trim();
                 log.info ("Case name: {}", caseName);
+                document.setName(caseName);
             } else {
                 log.error("Case details not found.");
             }

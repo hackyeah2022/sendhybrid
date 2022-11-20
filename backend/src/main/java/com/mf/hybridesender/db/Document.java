@@ -23,6 +23,25 @@ public class Document {
     private String correctedFileId;
 
     private String caseNumber;
+    private String epuap;
+
+    public String getEpuap() {
+        return epuap;
+    }
+
+    public void setEpuap(String epuap) {
+        this.epuap = epuap;
+    }
+
+    public String getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+
+    private String contactPerson;
 
     private String receiverName;
     private String receiverSurname;

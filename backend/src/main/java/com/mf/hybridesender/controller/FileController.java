@@ -51,8 +51,32 @@ public class FileController {
             throw new RuntimeException("Could not load file", e);
         }
         FileDB savedFile = fileRepository.save(fileDB);
-        pdfConverter.convertFromWordtoPDF2(savedFile.getId());
+
+        Document document = new Document();
+
+
+
         boolean pdfValidationFailed = !pdfReader.checkIfPdf(savedFile.getId());
+
+        if (pdfValidationFailed){
+
+            FileDB parsedFromWord = null;
+
+            try {
+                parsedFromWord = new FileDB(savedFile.getId()+".pdf","pdf",pdfConverter.convertFromWordtoPDF2(savedFile.getId()));
+            } catch (Exception e) {
+                System.out.println("Could not parsed from word");
+            }
+
+            if(parsedFromWord!=null){
+                fileRepository.save(parsedFromWord);
+                if(pdfReader.checkIfPdf(parsedFromWord.getId())){
+                    document.setCorrectedFileId(parsedFromWord.getId());
+                }
+            }
+
+
+        }
 
         boolean signatureValidationFailed = false;
         boolean fontsValidationFailed = false;
@@ -63,11 +87,11 @@ public class FileController {
         boolean filenameValidationFailed = false;
 
 
-        Document document = new Document();
+
 
         if (!pdfValidationFailed) {
             signatureValidationFailed = !pdfReader.checkSignatures(savedFile.getId());
-            fontsValidationFailed = !pdfReader.checkIfFontsEmbeded(savedFile.getId());
+            //fontsValidationFailed = !pdfReader.checkIfFontsEmbeded(savedFile.getId());
             imagesValidationFailed = !pdfReader.checkImagesRequirements(savedFile.getId());
             formsValidationFailed = !pdfReader.checkIfFreeOfForms(savedFile.getId());
             pdfReader.fillSenderAndReceiverData(savedFile.getId(), document);
@@ -76,6 +100,15 @@ public class FileController {
         }
 
         filenameValidationFailed = !documentValidator.validateFilename(savedFile.getName());
+
+        if (!pdfValidationFailed && filenameValidationFailed) {
+            FileDB correctedFile = new FileDB();
+            correctedFile.setData(savedFile.getData());
+            correctedFile.setType(savedFile.getType());
+            correctedFile.setName(savedFile.getId() + ".pdf");
+            correctedFile = fileRepository.save(correctedFile);
+            document.setCorrectedFileId(correctedFile.getId());
+        }
 
 
         boolean generalValidationFailed = pdfValidationFailed || signatureValidationFailed || fontsValidationFailed || imagesValidationFailed || formsValidationFailed || receiverAddressFailed || senderAddressFailed || filenameValidationFailed;

@@ -63,6 +63,10 @@ public class DocumentValidator {
     }
 
     public boolean validateFilename(String filename) {
+
+        if (!filename.contains(".pdf"))
+            return false;
+
         filename = filename.replace(".pdf", "");
 
         try {
