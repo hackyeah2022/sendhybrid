@@ -147,41 +147,43 @@ public class PdfReader {
             Pattern patternPostalCodePl = Pattern.compile("[0-9][0-9]-[0-9][0-9][0-9]");
             Pattern patternPageOrAddressNumber = Pattern.compile("[0-9]+/[0-9]+");
             Matcher matcherPageOrAddressNumber = patternPageOrAddressNumber.matcher(new StringBuilder(parsedText).reverse());
+            int pageEnd = 0;
             if (matcherPageOrAddressNumber.find()) {
-                int pageEnd = matcherPageOrAddressNumber.end();
-                String[] linedData = parsedText.substring(0,parsedText.length()-pageEnd).trim().split("\n");
-                String[] lastLine = linedData[linedData.length-1].split(COLLON);
-                if (lastLine.length == 3) {
-                    sender = lastLine[0].trim();
-                    log.info("Sender {}", sender);
-                    document.setSenderSurname(sender);
-                    String postalAndCity = lastLine[2].trim();
-                    Matcher postalSender = patternPostalCodePl.matcher(postalAndCity);
-                    int postalEnd = 0;
-                    if (postalSender.find()) {
-                        senderPostal = postalSender.group();
-                        document.setSenderZipcode(senderPostal);
-                        postalEnd = postalSender.end();
-                        log.info("Sender postal code: {}", senderPostal);
-                    } else {
-                        log.error("Not proper postal address");
-                    }
-                    senderCity = postalAndCity.substring(postalEnd).trim();
-                    String[] address = parseAddress(lastLine[1]);
-                    senderStreet = address[0];
-                    document.setSenderStreet(senderStreet);
-                    senderBuilding = address[1];
-                    document.setSenderHouseNumber(senderBuilding);
-                    senderFlat = address[2];
-                    document.setSenderFlatNumber(senderFlat);
-                    log.info("Sender City: {}", senderCity);
-                    document.setSenderCity(senderCity);
-                    //log.info ("Case number: {}", x);
-                } else {
-                    log.error("Not proper length for sender data");
+                pageEnd = matcherPageOrAddressNumber.end();
+                if (pageEnd > 15) {
+                    pageEnd = 0;
                 }
+            }
+            String[] linedData = parsedText.substring(0,parsedText.length()-pageEnd).trim().split("\n");
+            String[] lastLine = linedData[linedData.length-1].split(COLLON);
+            if (lastLine.length == 3) {
+                sender = lastLine[0].trim();
+                log.info("Sender {}", sender);
+                document.setSenderSurname(sender);
+                String postalAndCity = lastLine[2].trim();
+                Matcher postalSender = patternPostalCodePl.matcher(postalAndCity);
+                int postalEnd = 0;
+                if (postalSender.find()) {
+                    senderPostal = postalSender.group();
+                    document.setSenderZipcode(senderPostal);
+                    postalEnd = postalSender.end();
+                    log.info("Sender postal code: {}", senderPostal);
+                } else {
+                    log.error("Not proper postal address");
+                }
+                senderCity = postalAndCity.substring(postalEnd).trim();
+                String[] address = parseAddress(lastLine[1]);
+                senderStreet = address[0];
+                document.setSenderStreet(senderStreet);
+                senderBuilding = address[1];
+                document.setSenderHouseNumber(senderBuilding);
+                senderFlat = address[2];
+                document.setSenderFlatNumber(senderFlat);
+                log.info("Sender City: {}", senderCity);
+                document.setSenderCity(senderCity);
+                //log.info ("Case number: {}", x);
             } else {
-                log.error("Case number details not found.");
+                log.error("Not proper length for sender data");
             }
 
             Pattern patternPostalCodePlWithCity = Pattern.compile("[0-9][0-9]-[0-9][0-9][0-9] [a-zA-Z]+");
@@ -218,7 +220,15 @@ public class PdfReader {
                 document.setReceiverFlatNumber(receiverFlat);
 
                 String[] receiverNameArray = new String[2];
-                receiverNameArray[0] = linedPage[lineNumber-2];
+
+
+                Pattern patternEndContact = Pattern.compile("(\\+|@)");
+                Matcher matcherEndContact = patternEndContact.matcher(parsedText);
+                if (!matcherEndContact.find()) {
+                    receiverNameArray[0] = linedPage[lineNumber - 2];
+                } else {
+                    receiverNameArray[0] = "";
+                }
                 receiverNameArray[1] = linedPage[lineNumber-1];
                 String receiverName = String.join("", receiverNameArray).replace(NEW_LINE, "").replace(NEW_LINE_WINDOWS, "").trim();
                 String[] receiverNameArray2 = receiverName.split(SPACE);

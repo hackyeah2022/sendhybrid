@@ -5,6 +5,7 @@ import com.mf.hybridesender.db.Document;
 import com.mf.hybridesender.db.FileDB;
 import com.mf.hybridesender.repositories.DocumentRepository;
 import com.mf.hybridesender.repositories.FileRepository;
+import com.mf.hybridesender.services.AutoPdfConverter;
 import com.mf.hybridesender.services.DocumentValidator;
 import com.mf.hybridesender.services.PdfReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class FileController {
     private PdfReader pdfReader;
 
     @Autowired
+    private AutoPdfConverter pdfConverter;
+
+    @Autowired
     private DocumentValidator documentValidator;
 
     @PostMapping("/upload")
@@ -47,6 +51,7 @@ public class FileController {
             throw new RuntimeException("Could not load file", e);
         }
         FileDB savedFile = fileRepository.save(fileDB);
+        pdfConverter.convertFromWordtoPDF2(savedFile.getId());
         boolean pdfValidationFailed = !pdfReader.checkIfPdf(savedFile.getId());
 
         boolean signatureValidationFailed = false;
