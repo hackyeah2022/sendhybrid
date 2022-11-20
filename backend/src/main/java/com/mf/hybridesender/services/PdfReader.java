@@ -12,6 +12,7 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.util.Matrix;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.tomcat.util.codec.binary.StringUtils;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -32,10 +33,7 @@ import java.security.MessageDigest;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -189,7 +187,33 @@ public class PdfReader {
                 receiverPostal = receiverPostalAndCity[0].trim();
                 intermediateReceiverStart = matcherPostalReceiver.start();
                 int lineNumber = parsedText.substring(0,matcherPostalReceiver.end()).split(NEW_LINE).length;
-                int num = 1;
+                String[] linedPage = parsedText.split(NEW_LINE);
+                String possibleAddress1 = linedPage[lineNumber];
+                String possibleAddress2 = linedPage[lineNumber-2];
+                String[] parsePossibleAddress1 = parseAddress(possibleAddress1);
+                String[] parsePossibleAddress2 = parseAddress(possibleAddress2);
+                long possibleAddress2Long = Arrays.stream(parsePossibleAddress2).filter(x -> (x != null && x.length() > 0)).count();
+                long possibleAddress1Long = Arrays.stream(parsePossibleAddress1).filter(x -> (x != null && x.length() > 0)).count();
+                if (possibleAddress2Long > possibleAddress1Long) {
+                    receiverStreet = parsePossibleAddress2[0];
+                    receiverBuilding = parsePossibleAddress2[1];
+                    receiverFlat = parsePossibleAddress2[2];
+                    intermediateReceiverStart = intermediateReceiverStart - possibleAddress2.length();
+                    lineNumber = lineNumber -2;
+                } else {
+                    receiverStreet = parsePossibleAddress1[0];
+                    receiverBuilding = parsePossibleAddress1[1];
+                    receiverFlat = parsePossibleAddress1[2];
+                }
+
+                String[] receiverNameArray = new String[2];
+                receiverNameArray[0] = linedPage[lineNumber-2];
+                receiverNameArray[1] = linedPage[lineNumber-1];
+                String receiverName = String.join("", receiverNameArray).replace(NEW_LINE, "").replace(NEW_LINE_WINDOWS, "").trim();
+                String[] receiverNameArray2 = receiverName.split(SPACE);
+                receiver = receiverNameArray2[0];
+                receiver2 = receiverNameArray2[1];
+                int x = 1;
             } else {
                 log.error("Receiver city/postal not found. Receiver not found");
             }
@@ -225,8 +249,8 @@ public class PdfReader {
             if (matcherOnlyNumber.matches()) {
                 streetEnd = matcherOnlyNumber.start() - 1;
             }
-            returnAddress[0] = address.substring(0,streetEnd).trim();
-            returnAddress[1] = address.substring(streetEnd+1).trim();
+            returnAddress[0] = address.substring(0,streetEnd-1).trim();
+            returnAddress[1] = address.substring(streetEnd).trim();
             log.info("Address info Street {}, Building {}, Local {}", returnAddress);
         } else {
             log.error("Address not valid");
