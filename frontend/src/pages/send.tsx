@@ -40,7 +40,7 @@ const SendPage: FC<SendPageProps> = ({ ...props }) => {
   return (
     <PageContainer centerContent {...props}>
       <PageHeading>
-        Wybierz dokument, a my dostarczymy go jako list do odbiorcy!
+        Wybierz dokument, a my dostarczymy go do odbiorcy w formie listu!
       </PageHeading>
       <FileInput
         selectedFile={selectedFile}
