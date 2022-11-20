@@ -170,9 +170,14 @@ const NavBar: FC<Props> = ({ ...props }) => {
           </>
         )}
         {isLoggedIn && userRole === 'admin' && (
-          <Link href="/admin/dashboard" passHref legacyBehavior>
-            <NavLink>Panel administratora</NavLink>
-          </Link>
+          <>
+            <Link href="/admin/dashboard" passHref legacyBehavior>
+              <NavLink>Panel administratora</NavLink>
+            </Link>
+            <Link href="/admin/settings" passHref legacyBehavior>
+              <NavLink>Ustawienia</NavLink>
+            </Link>
+          </>
         )}
       </LeftSideWrapper>
       {router.pathname !== routes.LOGIN && !isLoggedIn && (
