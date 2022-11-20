@@ -2,13 +2,14 @@ import { FC, useEffect } from 'react';
 import { ErrorCode, useDropzone } from 'react-dropzone';
 import { showNotification } from '@mantine/notifications';
 
+import XMark from 'icons/XMark';
 import Button from 'components/atoms/Button/Button';
 
 import * as S from './FileInput.styles';
 
 export interface Props {
-  selectedFile?: File;
-  setSelectedFile: (file: File) => void;
+  selectedFile: File | null;
+  setSelectedFile: (file: File | null) => void;
   progress: number;
 }
 
@@ -40,28 +41,34 @@ const FileInput: FC<Props> = ({
   return (
     <S.Wrapper
       animate={{ scale: !selectedFile ? (isDragActive ? 1.05 : 1) : 1 }}
-      {...(getRootProps() as any)}
       {...props}
     >
-      <S.Input {...getInputProps()} />
       {!!selectedFile && (
-        <S.SelectedFileWrapper layout>
-          {selectedFile.name && (
-            <S.SelectedFileName>{selectedFile.name}</S.SelectedFileName>
-          )}
-        </S.SelectedFileWrapper>
+        <S.RemoveFileButton onClick={() => setSelectedFile(null)}>
+          <XMark width="100%" height="100%" />
+        </S.RemoveFileButton>
       )}
-      {!selectedFile && isDragActive && (
-        <S.InfoText>Upuść tutaj plik</S.InfoText>
-      )}
-      {!selectedFile && !isDragActive && (
-        <>
-          <S.InfoText>Przenieś tutaj plik</S.InfoText>
-          <S.InfoText>lub</S.InfoText>
-          <Button>Wybierz plik</Button>
-        </>
-      )}
-      {progress > 0 && <S.ProgressBar layout $value={progress} />}
+      <S.DropzoneWrapper {...(getRootProps() as any)}>
+        <S.Input {...getInputProps()} />
+        {!!selectedFile && (
+          <S.SelectedFileWrapper layout>
+            {selectedFile.name && (
+              <S.SelectedFileName>{selectedFile.name}</S.SelectedFileName>
+            )}
+          </S.SelectedFileWrapper>
+        )}
+        {!selectedFile && isDragActive && (
+          <S.InfoText>Upuść tutaj plik</S.InfoText>
+        )}
+        {!selectedFile && !isDragActive && (
+          <>
+            <S.InfoText>Przenieś tutaj plik</S.InfoText>
+            <S.InfoText>lub</S.InfoText>
+            <Button>Wybierz plik</Button>
+          </>
+        )}
+        {progress > 0 && <S.ProgressBar layout $value={progress} />}
+      </S.DropzoneWrapper>
     </S.Wrapper>
   );
 };

@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 import { FC, useEffect, useState } from 'react';
-import { showNotification } from '@mantine/notifications';
+import { useRouter } from 'next/router';
 
 import useUploadFile from 'hooks/useUploadFile';
 import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 import FileInput from 'components/atoms/FileInput/FileInput';
 import Button from 'components/atoms/Button/Button';
 import Modal from 'components/atoms/Modal/Modal';
-import {useRouter} from "next/router";
 
 export interface SendPageProps {}
 
@@ -19,20 +18,25 @@ const PageContainer = styled(PageContainerBase)`
 const PageHeading = styled.h1`
   width: 24rem;
   font-size: 28px;
-  line-height: 1.15;
+  line-height: 1.3;
 `;
 
 const SendPage: FC<SendPageProps> = ({ ...props }) => {
-    const router = useRouter()
+  const router = useRouter();
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<File>();
-  const { uploadFile, uploadProgress, errorMessage, uploadedSuccessfully, responseBody } =
-    useUploadFile();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const {
+    uploadFile,
+    uploadProgress,
+    errorMessage,
+    uploadedSuccessfully,
+    responseBody,
+  } = useUploadFile();
 
   useEffect(() => setIsModalOpened(!!errorMessage), [errorMessage]);
   useEffect(() => {
-    if(uploadedSuccessfully) {
-        router.push(`/submission-preview/${responseBody.id}`)
+    if (uploadedSuccessfully) {
+      router.push(`/submission-preview/${responseBody.id}`);
     }
   }, [uploadedSuccessfully]);
 
