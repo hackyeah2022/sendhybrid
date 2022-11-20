@@ -26,6 +26,8 @@ dependencies {
 	implementation 'org.bouncycastle:bcprov-jdk18on:1.72'
 	implementation 'org.bouncycastle:bcpkix-jdk18on:1.72'
 	implementation 'eu.europa.ec.joinup.sd-dss:dss-bom:5.11.1'
+	implementation 'com.fasterxml.jackson.core:jackson-core'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
