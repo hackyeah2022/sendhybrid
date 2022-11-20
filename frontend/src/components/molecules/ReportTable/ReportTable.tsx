@@ -1,4 +1,4 @@
-import React, { HTMLProps } from 'react'
+import React, {HTMLProps, useState} from 'react'
 
 
 import {
@@ -20,6 +20,7 @@ import Pagination from "./Pagination";
 import routes from "../../../utils/routes";
 import Link from "next/link";
 import {useRouter} from "next/router";
+import DeleteModal from "./DeleteModal";
 
 const TableElement = styled.table`
   margin-top: 1rem;
@@ -101,7 +102,7 @@ const EmptyDataRow = styled.tr`
 const ReportTable = ({data, renderSearch}) => {
     const router = useRouter()
     const [rowSelection, setRowSelection] = React.useState({})
-    const [globalFilter, setGlobalFilter] = React.useState('')
+    const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false)
     const columns = React.useMemo<ColumnDef<any>[]>(createColumns, [])
 
     const table = useReactTable({
@@ -117,15 +118,22 @@ const ReportTable = ({data, renderSearch}) => {
         debugTable: true,
     })
 
+    const selectedIds = Object.keys(rowSelection).map(idx => table.getRow(idx).getValue('id'))
+
     const handleGenerateSummaryReportClick = () => {
-        const ids = Object.keys(rowSelection).map(idx => table.getRow(idx).getValue('id')).join(',')
+        const ids = selectedIds.join(',')
         router.push(`/summary-report/?ids=${ids}`)
     }
 
-    const noOfRowsSelected = Object.keys(rowSelection).length
+    const handleDeleteSelectedIds = () => {
+        setIsDeleteModalOpened(true)
+    }
+
+    const noOfRowsSelected = 4
 
     return (
         <>
+            <DeleteModal isOpened={isDeleteModalOpened} setIsModalOpened={setIsDeleteModalOpened} />
             <ActionsWrapper>
                 <SingleActionsWrapper>
                     {renderSearch()}
@@ -136,7 +144,7 @@ const ReportTable = ({data, renderSearch}) => {
                 {noOfRowsSelected > 0 && (
                     <BulkActionsWrapper>
                         <SmallButton onClick={handleGenerateSummaryReportClick}>Wygeneruj raport zbiorczy</SmallButton>
-                        <SmallButton>Usuń wybrane raporty</SmallButton>
+                        <SmallButton onClick={handleDeleteSelectedIds}>Usuń wybrane raporty</SmallButton>
                     </BulkActionsWrapper>
                 )}
             </ActionsWrapper>
