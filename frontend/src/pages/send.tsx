@@ -8,6 +8,8 @@ import FileInput from 'components/atoms/FileInput/FileInput';
 import Button from 'components/atoms/Button/Button';
 import Modal from 'components/atoms/Modal/Modal';
 import {useRouter} from "next/router";
+import {BarLoader} from "react-spinners";
+import theme from "../utils/styled/theme";
 
 export interface SendPageProps {}
 
