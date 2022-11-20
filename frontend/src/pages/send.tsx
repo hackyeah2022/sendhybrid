@@ -21,6 +21,10 @@ const PageHeading = styled.h1`
   line-height: 1.3;
 `;
 
+const BlueText = styled.span`
+  color: ${({ theme }) => theme.colors.lightBlue};
+`;
+
 const SendPage: FC<SendPageProps> = ({ ...props }) => {
   const router = useRouter();
   const [isModalOpened, setIsModalOpened] = useState<boolean>(false);
@@ -43,7 +47,8 @@ const SendPage: FC<SendPageProps> = ({ ...props }) => {
   return (
     <PageContainer centerContent {...props}>
       <PageHeading>
-        Wybierz dokument, a my dostarczymy go do odbiorcy w formie listu!
+        Wybierz <BlueText>dokument</BlueText>, a my dostarczymy go do odbiorcy{' '}
+        <BlueText>w formie listu!</BlueText>
       </PageHeading>
       <FileInput
         selectedFile={selectedFile}
