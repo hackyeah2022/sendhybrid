@@ -45,6 +45,33 @@ public class Document {
     private boolean validationFormFieldsFailed;
     private boolean validationCMYKFailed;
     private boolean validationFontsFailed;
+    private boolean validationSenderAddressFailed;
+    private boolean validationReceiverAddressFailed;
+    private boolean validationFilenameFailed;
+
+    public boolean isValidationFilenameFailed() {
+        return validationFilenameFailed;
+    }
+
+    public void setValidationFilenameFailed(boolean validationFilenameFailed) {
+        this.validationFilenameFailed = validationFilenameFailed;
+    }
+
+    public boolean isValidationSenderAddressFailed() {
+        return validationSenderAddressFailed;
+    }
+
+    public void setValidationSenderAddressFailed(boolean validationSenderAddressFailed) {
+        this.validationSenderAddressFailed = validationSenderAddressFailed;
+    }
+
+    public boolean isValidationReceiverAddressFailed() {
+        return validationReceiverAddressFailed;
+    }
+
+    public void setValidationReceiverAddressFailed(boolean validationReceiverAddressFailed) {
+        this.validationReceiverAddressFailed = validationReceiverAddressFailed;
+    }
 
     private boolean sent;
 

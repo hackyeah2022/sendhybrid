@@ -5,6 +5,7 @@ import com.mf.hybridesender.db.Document;
 import com.mf.hybridesender.db.FileDB;
 import com.mf.hybridesender.repositories.DocumentRepository;
 import com.mf.hybridesender.repositories.FileRepository;
+import com.mf.hybridesender.services.DocumentValidator;
 import com.mf.hybridesender.services.PdfReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,9 @@ public class FileController {
     @Autowired
     private PdfReader pdfReader;
 
+    @Autowired
+    private DocumentValidator documentValidator;
+
     @PostMapping("/upload")
     public Document uploadFile(@RequestParam("file") MultipartFile file) {
         FileDB fileDB = null;
@@ -44,20 +48,43 @@ public class FileController {
         }
         FileDB savedFile = fileRepository.save(fileDB);
         boolean pdfValidationFailed = !pdfReader.checkIfPdf(savedFile.getId());
-        boolean signatureValidationFailed = !pdfReader.checkSignatures(savedFile.getId());
-        boolean fontsValidationFailed = !pdfReader.checkIfFontsEmbeded(savedFile.getId());
-        boolean imagesValidationFailed = !pdfReader.checkImagesRequirements(savedFile.getId());
-        boolean formsValidationFailed = !pdfReader.checkIfFreeOfForms(savedFile.getId());
 
-        boolean generalValidationFailed = pdfValidationFailed || signatureValidationFailed || fontsValidationFailed || imagesValidationFailed || formsValidationFailed;
-        pdfReader.senderData(savedFile.getId());
+        boolean signatureValidationFailed = false;
+        boolean fontsValidationFailed = false;
+        boolean imagesValidationFailed = false;
+        boolean formsValidationFailed = false;
+        boolean receiverAddressFailed = false;
+        boolean senderAddressFailed = false;
+        boolean filenameValidationFailed = false;
+
+
         Document document = new Document();
+
+        if (!pdfValidationFailed) {
+            signatureValidationFailed = !pdfReader.checkSignatures(savedFile.getId());
+            fontsValidationFailed = !pdfReader.checkIfFontsEmbeded(savedFile.getId());
+            imagesValidationFailed = !pdfReader.checkImagesRequirements(savedFile.getId());
+            formsValidationFailed = !pdfReader.checkIfFreeOfForms(savedFile.getId());
+            pdfReader.fillSenderAndReceiverData(savedFile.getId(), document);
+            receiverAddressFailed = !documentValidator.validateReceiverAddress(document);
+            senderAddressFailed = !documentValidator.validateSenderAddress(document);
+        }
+
+        filenameValidationFailed = !documentValidator.validateFilename(savedFile.getName());
+
+
+        boolean generalValidationFailed = pdfValidationFailed || signatureValidationFailed || fontsValidationFailed || imagesValidationFailed || formsValidationFailed || receiverAddressFailed || senderAddressFailed || filenameValidationFailed;
+
+
         document.setValidationPdfFailed(pdfValidationFailed);
         document.setValidationSignatureFailed(signatureValidationFailed);
         document.setValidationFontsFailed(fontsValidationFailed);
         document.setValidationCMYKFailed(imagesValidationFailed);
         document.setValidationFormFieldsFailed(formsValidationFailed);
         document.setValidationGeneralFailed(generalValidationFailed);
+        document.setValidationReceiverAddressFailed(receiverAddressFailed);
+        document.setValidationSenderAddressFailed(senderAddressFailed);
+        document.setValidationFilenameFailed(filenameValidationFailed);
 
         document.setCreated(new Date());
 
