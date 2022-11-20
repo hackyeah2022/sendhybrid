@@ -8,7 +8,7 @@ const NotOkIcon = styled(XCircle)`
 `
 
 const OkIcon = styled(CheckCircle)`
-  stroke: ${({theme}) => theme.colors.green };
+  stroke: green;
 `
 
 interface StatusIconProps extends SVGProps<SVGSVGElement> {

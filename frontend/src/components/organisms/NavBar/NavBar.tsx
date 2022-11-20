@@ -133,13 +133,13 @@ const NavBar: FC<Props> = ({ ...props }) => {
         </Link>
         {isLoggedIn && (
           <Link href="/send" passHref legacyBehavior>
-            <SpecialNavBarItem>Wyślij nowy list</SpecialNavBarItem>
+            <SpecialNavBarItem>Wyślij nowy dokument</SpecialNavBarItem>
           </Link>
         )}
         {isLoggedIn && (
           <>
             <Link href="/submissions" passHref legacyBehavior>
-              <NavLink>Zgłoszenia</NavLink>
+              <NavLink>Dokumenty</NavLink>
             </Link>
           </>
         )}

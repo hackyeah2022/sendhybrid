@@ -32,7 +32,7 @@ const GoBack = () => (
   <Link href="/submissions">
     <StyledA>
       <ArrowLeft />
-      <span>Wróć do dashboardu</span>
+      <span>Wróć do dokumentów</span>
     </StyledA>
   </Link>
 );

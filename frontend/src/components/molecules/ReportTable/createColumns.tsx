@@ -45,7 +45,7 @@ cell: ({ row }) => (
 },
 {
     header: 'Nr sprawy',
-        accessorKey: 'id',
+        accessorKey: 'caseNumber',
     footer: props => props.column.id,
 },
 {
@@ -56,25 +56,31 @@ cell: ({ row }) => (
 {
     header: 'Data weryfikacji',
         accessorKey: 'date',
+    cell: ({getValue}) => new Date(getValue()).toLocaleString(),
     footer: props => props.column.id,
 },
+    {
+        header: 'Status weryfikacji',
+        accessorKey: 'validationGeneralFailed',
+        cell: ({getValue}) => <div><CustomStatusIcon isOk={!getValue()} />{getValue()}</div>,
+        footer: props => props.column.id,
+    },
 {
-    header: 'Status weryfikacji',
-        accessorKey: 'status',
-    cell: () =><CustomStatusIcon isOk={false} />,
+    header: 'Wysłano',
+        accessorKey: 'sent',
+    cell: ({getValue}) => <CustomStatusIcon isOk={getValue()} />,
     footer: props => props.column.id,
 },
 {
     header: 'Zobacz raport',
-
-    cell: ({row: {getValue}}) => (
-        <Link href={`/report/${getValue('id')}`}>
+    accessorKey: 'id',
+    cell: ({getValue}) => (
+        <Link href={`/report/${getValue()}`}>
             <a>
                 <GoToReportButton>Zobacz raport</GoToReportButton>
             </a>
         </Link>
     ),
-
     footer: props => props.column.id,
 },
 ]
