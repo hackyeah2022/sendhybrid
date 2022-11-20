@@ -28,6 +28,11 @@ dependencies {
 	implementation 'eu.europa.ec.joinup.sd-dss:dss-bom:5.11.1'
 	implementation 'com.fasterxml.jackson.core:jackson-core'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'fr.opensagres.xdocreport:xdocreport:2.0.4'
+	implementation 'fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter.docx.xwpf:2.0.4'
+	implementation 'org.odftoolkit:odfdom-java:0.10.0'
+	implementation 'com.documents4j:documents4j-local:1.1.9'
+	implementation 'com.documents4j:documents4j-transformer-msoffice-word:1.1.9'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -35,4 +40,12 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jar {
+	manifest {
+		attributes(
+				'Main-Class': 'com.mf.hybridesender.HybridesenderApplication'
+		)
+	}
 }
