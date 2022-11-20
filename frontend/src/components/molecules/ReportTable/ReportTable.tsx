@@ -170,7 +170,9 @@ const ReportTable = ({data, renderSearch}) => {
                         <Row key={row.id}>
                             {row.getVisibleCells().map(cell => {
                                 return (
-                                    <td key={cell.id}>
+                                    <td key={cell.id} style={{
+                                        width: cell.column.columnDef.meta?.fullWidth ? '100%' : 'auto'
+                                    }}>
                                         {flexRender(
                                             cell.column.columnDef.cell,
                                             cell.getContext()

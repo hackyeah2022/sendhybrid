@@ -4,9 +4,13 @@ import PageContainer from 'components/atoms/PageContainer/PageContainer';
 import ReportTable from 'components/molecules/ReportTable/ReportTable';
 import styled from 'styled-components';
 import Button from '../components/atoms/Button/Button';
-import { useQuery } from '@tanstack/react-query';
+import {dehydrate, QueryClient, useQuery} from '@tanstack/react-query';
 import environment from '../environment';
 import { useDebouncedValue } from '@mantine/hooks';
+import useAllReports, {fetchAllReports, getAllReportsQueryKey} from "../hooks/useAllReports";
+import {GetServerSidePropsContext, GetServerSidePropsResult} from "next";
+import {fetchSingleReport, getSingleReportQueryKey} from "../hooks/useSingleReport";
+import allReportsGetServerSideProps from "../lib/allReportsGetServerSideProps";
 
 const Wrapper = styled.div`
   width: 75%;
@@ -33,22 +37,6 @@ const SearchInput = styled.input`
 `;
 
 
-const fetchReports = (caseId?: string) =>
-  fetch(
-      caseId && caseId.trim().length > 0 ?
-          `${environment.API_URL}/documents/getByCaseNumber/${caseId}` :
-          `${environment.API_URL}/documents/getAll`
-  )
-    .then(res => res.json())
-    .then(res =>
-      res.map((singleDoc) => ({
-        id: singleDoc.id,
-        name: singleDoc.name,
-        sent: singleDoc.sent,
-        validationGeneralFailed: singleDoc.validationGeneralFailed,
-        date: singleDoc.created,
-      }))
-    );
 
 export interface DashboardPageProps {}
 
@@ -56,9 +44,7 @@ const DashboardPage: FC<DashboardPageProps> = ({ ...props }) => {
   const [inputValue, setInputValue] = useState('');
   const debouncedInputValue = useDebouncedValue(inputValue, 400);
 
-  const { data } = useQuery(['search', debouncedInputValue], () => fetchReports(debouncedInputValue[0]), {
-    initialData: async () => [] as string[],
-  });
+  const { data } = useAllReports(debouncedInputValue[0])
 
   return (
     <PageContainer wide {...props}>
@@ -80,3 +66,5 @@ const DashboardPage: FC<DashboardPageProps> = ({ ...props }) => {
 };
 
 export default DashboardPage;
+
+export const getServerSideProps = allReportsGetServerSideProps

@@ -13,6 +13,7 @@ const GoToReportButton = styled(Button)`
   background: ${({theme}) => theme.colors.lightBlue};
   color: ${({theme}) => theme.colors.white};
   padding: 0.2rem 0.4rem;
+
   &:hover {
     background: ${({theme}) => theme.colors.blue};
     border-color: background: ${({theme}) => theme.colors.blue};
@@ -22,67 +23,72 @@ const GoToReportButton = styled(Button)`
 const createColumns = () => [
     {
         id: 'select',
-        header: ({ table }) => (
+        header: ({table}) => (
             <IndeterminateCheckbox
                 {...{
-                        checked: table.getIsAllRowsSelected(),
-                        indeterminate: table.getIsSomeRowsSelected(),
-                        onChange: table.getToggleAllRowsSelectedHandler(),
-                    }}
-    />
-),
-cell: ({ row }) => (
-    <div className="px-1">
-        <IndeterminateCheckbox
-            {...{
-                    checked: row.getIsSelected(),
-                    indeterminate: row.getIsSomeSelected(),
-                    onChange: row.getToggleSelectedHandler(),
+                    checked: table.getIsAllRowsSelected(),
+                    indeterminate: table.getIsSomeRowsSelected(),
+                    onChange: table.getToggleAllRowsSelectedHandler(),
                 }}
-/>
-</div>
-),
-},
-{
-    header: 'Nr sprawy',
+            />
+        ),
+        cell: ({row}) => (
+            <div className="px-1">
+                <IndeterminateCheckbox
+                    {...{
+                        checked: row.getIsSelected(),
+                        indeterminate: row.getIsSomeSelected(),
+                        onChange: row.getToggleSelectedHandler(),
+                    }}
+                />
+            </div>
+        ),
+    },
+    {
+        header: 'ID',
+        accessorKey: 'id',
+        footer: props => props.column.id,
+    },
+    {
+        header: 'Nr sprawy',
         accessorKey: 'caseNumber',
-    footer: props => props.column.id,
-},
-{
-    header: 'Nazwa',
+        footer: props => props.column.id,
+    },
+    {
+        header: 'Nazwa',
         accessorKey: 'name',
-    footer: props => props.column.id,
-},
-{
-    header: 'Data weryfikacji',
+        footer: props => props.column.id,
+    },
+    {
+        header: 'Data weryfikacji',
         accessorKey: 'date',
-    cell: ({getValue}) => new Date(getValue()).toLocaleString(),
-    footer: props => props.column.id,
-},
+        cell: ({getValue}) => new Date(getValue()).toLocaleString(),
+        footer: props => props.column.id,
+    },
     {
         header: 'Status weryfikacji',
         accessorKey: 'validationGeneralFailed',
-        cell: ({getValue}) => <div><CustomStatusIcon isOk={!getValue()} />{getValue()}</div>,
+        cell: ({getValue}) => <div><CustomStatusIcon isOk={!getValue()}/>{getValue()}</div>,
         footer: props => props.column.id,
     },
-{
-    header: 'Wysłano',
+    {
+        header: 'Wysłano',
         accessorKey: 'sent',
-    cell: ({getValue}) => <CustomStatusIcon isOk={getValue()} />,
-    footer: props => props.column.id,
-},
-{
-    header: 'Zobacz raport',
-    accessorKey: 'id',
-    cell: ({getValue}) => (
-        <Link href={`/report/${getValue()}`}>
-            <a>
-                <GoToReportButton>Zobacz raport</GoToReportButton>
-            </a>
-        </Link>
-    ),
-    footer: props => props.column.id,
-},
+        cell: ({getValue}) => <CustomStatusIcon isOk={getValue()}/>,
+        footer: props => props.column.id,
+    },
+    {
+        header: 'Zobacz raport',
+        accessorKey: 'id',
+        cell: ({getValue}) => (
+            <Link href={`/report/${getValue()}`}>
+                <a>
+                    <GoToReportButton>Zobacz raport</GoToReportButton>
+                </a>
+            </Link>
+        ),
+        footer: props => props.column.id,
+    },
 ]
 
 export default createColumns

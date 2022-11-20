@@ -13,6 +13,8 @@ import GoBack from "../components/atoms/GoBack/GoBack";
 import FeedbackMessage from "../components/atoms/FeedbackMessage/FeedbackMessage";
 import SingleReportCard from "../components/molecules/SummaryReport/SingleReportCard";
 import getFeedbackMessagesProps from "../lib/getFeedbackMessagesProps";
+import allReportsGetServerSideProps from "../lib/allReportsGetServerSideProps";
+import useAllReports from "../hooks/useAllReports";
 
 const Wrapper = styled.div`
   padding-top: 1rem;
@@ -63,9 +65,16 @@ const SingleReportWrapper = styled.div`
   }
 `
 
+const reportGenerationDate = new Date()
+
 export interface SummaryReportPageProps {}
 
-const SummaryReportPage: FC<SummaryReportPageProps> = ({ reportGenerationDate, reportsDetails, ...props }) => {
+const SummaryReportPage: FC<SummaryReportPageProps> = ({ query, ...props }) => {
+    const ids = query.ids.split(',')
+    const {data} = useAllReports()
+    const filteredReports = data.filter(rep => ids.includes(rep.id))
+
+
     const createClickHandler = (id: string): MouseEventHandler => (e) => {
         if(typeof window != 'undefined') {
             e.preventDefault()
@@ -84,7 +93,7 @@ const SummaryReportPage: FC<SummaryReportPageProps> = ({ reportGenerationDate, r
                 <span>Czas wygenerowania raportu: {new Date(reportGenerationDate).toLocaleString()}</span>
                 <SubHeading>Pliki zawarte w raporcie</SubHeading>
                 <TableOfContents>
-                    {reportsDetails.map(({name, id}, i) => (
+                    {filteredReports.map(({name, id}, i) => (
                         <li key={name}>
                             <a
                                 onClick={createClickHandler(id)}
@@ -97,7 +106,7 @@ const SummaryReportPage: FC<SummaryReportPageProps> = ({ reportGenerationDate, r
                     ))}
                 </TableOfContents>
                 <SubHeading>Pliki</SubHeading>
-                {reportsDetails.map((reportDetails) => (
+                {filteredReports.map((reportDetails) => (
                     <SingleReportWrapper id={`report-section-${reportDetails.id}`}>
                         <SingleReportCard reportDetails={reportDetails} />
                     </SingleReportWrapper>
@@ -110,31 +119,4 @@ const SummaryReportPage: FC<SummaryReportPageProps> = ({ reportGenerationDate, r
 export default SummaryReportPage;
 
 
-export const getServerSideProps = async ({query}: GetServerSidePropsContext): GetServerSidePropsResult<{reportsDetails: ReportDetails[]}> => {
-    const reports = await fetch(`${environment.API_URL}/documents/getAll`).then(res => res.json())
-    if (!query.ids || typeof query.ids !== 'string')
-        return {
-            props: {
-                errorMessage: 'Brak podanego id'
-            }
-        }
-
-    const ids = query.ids.split(',')
-    const filteredReports = reports.filter(rep => ids.includes(rep.id))
-    console.log(filteredReports)
-    return {
-        props: {
-            reportGenerationDate: new Date().toISOString(),
-            reportsDetails: filteredReports.map(res => ({
-                ...res,
-                id: res.id,
-                name: res.name ?? 'Brak nazwy',
-                isCorrectedFileAvailable: res.correctedFileId && res.correctedFileId.trim().length > 0,
-                originalPreviewUrl: `${environment.API_URL}/files/content/${res.originalFileId}`,
-                correctedPreviewUrl: `${environment.API_URL}/files/content/${res.correctedFileId}`,
-                verificationDate: res.created,
-                feedbackMessagesProps: getFeedbackMessagesProps(res),
-            }))
-        }
-    }
-}
+export const getServerSideProps = allReportsGetServerSideProps

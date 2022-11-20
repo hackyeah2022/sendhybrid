@@ -18,8 +18,24 @@ const mapping = {
     validationFontsFailed: {
         notOk: 'Plik PDF nie zawiera dołączonych czcionek',
         ok: 'Plik PDF zawiera dołączone czcionki'
-    }
+    },
+    validationSenderAddressFailed: {
+        notOk: 'Niepoprawny adres nadawcy',
+        ok: 'Adres nadawcy jest poprawny'
+    },
+    validationReceiverAddressFailed: {
+        notOk: 'Niepoprawny adres odbiorcy',
+        ok: 'Adres odbiorcy jest poprawny'
+    },
+    validationFilenameFailed: {
+        notOk: 'Nazwa pliku lub rozszerzenie są niepoprawne',
+        ok: 'Nazwa pliku i rozszerzenie są poprawne'
+    },
 }
+// pdf pop, nazwa niep
+// Nazwa bądż rozszerzenie zostały naprawione. Pobierz poprawioną wersję pliku PDF
+
+// valid pdp jest ok, correctedFileId nie jest nullem. Skonwertowano plik Worda do PDF. Pobierz go, podpisz i prześlij ponownie
 
 const getFeedbackMessagesProps = (docResponse) => {
     const feedbackList = Object.keys(mapping).reduce((acc, key) => {
@@ -43,7 +59,7 @@ const getFeedbackMessagesProps = (docResponse) => {
         }
         return acc
     }, [] as any[])
-    return feedbackList.sort((a, b) => a.isOk)
+    return feedbackList.sort((a, b) => Number(a.isOk) - Number(b.isOk))
 }
 
 export default getFeedbackMessagesProps

@@ -458,6 +458,7 @@ __metadata:
     react-hooks-global-state: ^2.0.0
     react-paginate: ^8.1.4
     react-pdf: ^6.1.0
+    react-spinners: ^0.13.6
     styled-components: ^5.3.6
     typescript: 4.8.4
     wretch: ^2.1.5
@@ -3335,6 +3336,16 @@ __metadata:
     file-loader:
       optional: true
   checksum: 3a309b8cd639fffd1f25774fb8d3fb7af21acd7ad04a93a68fe2215bda5ee7bdd0d52f664f8b69e35e4205f2544ac50b1f9f201292fa4f5824fb3f13bf331d37
+  languageName: node
+  linkType: hard
+
+"react-spinners@npm:^0.13.6":
+  version: 0.13.6
+  resolution: "react-spinners@npm:0.13.6"
+  peerDependencies:
+    react: ^16.0.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 0e557190b5811e62774de0000f91fdcc3afe845872084abd5620d16335eb8292ed3fb3fdb94527fe2802a8366ac4e5d42c8e5bffda9e8ed0d85d3c34b3829d8e
   languageName: node
   linkType: hard
 
