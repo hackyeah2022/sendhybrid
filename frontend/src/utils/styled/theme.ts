@@ -19,6 +19,7 @@ const layout = {
 
 const zIndexes = {
   navBar: 500,
+  overlay: 1000,
   debug: 9999,
 };
 
