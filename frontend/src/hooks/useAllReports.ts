@@ -15,6 +15,10 @@ const transformRes = res =>
     caseNumber: singleDoc.caseNumber ?? 'Brak nr sprawy',
     sent: singleDoc.sent,
     validationGeneralFailed: singleDoc.validationGeneralFailed,
+      isCorrectedFileAvailable: Boolean(singleDoc.correctedFileId),
+      originalPreviewUrl: `${environment.API_URL}/files/content/${singleDoc.originalFileId}`,
+      correctedPreviewUrl: `${environment.API_URL}/files/content/${singleDoc.correctedFileId}`,
+      verificationDate: singleDoc.created,
     date: singleDoc.created,
       feedbackMessagesProps: getFeedbackMessagesProps(res)
   }));
