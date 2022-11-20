@@ -4,13 +4,19 @@ import PageContainer from 'components/atoms/PageContainer/PageContainer';
 import ReportTable from 'components/molecules/ReportTable/ReportTable';
 import styled from 'styled-components';
 import Button from '../components/atoms/Button/Button';
-import {dehydrate, QueryClient, useQuery} from '@tanstack/react-query';
+import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 import environment from '../environment';
 import { useDebouncedValue } from '@mantine/hooks';
-import useAllReports, {fetchAllReports, getAllReportsQueryKey} from "../hooks/useAllReports";
-import {GetServerSidePropsContext, GetServerSidePropsResult} from "next";
-import {fetchSingleReport, getSingleReportQueryKey} from "../hooks/useSingleReport";
-import allReportsGetServerSideProps from "../lib/allReportsGetServerSideProps";
+import useAllReports, {
+  fetchAllReports,
+  getAllReportsQueryKey,
+} from '../hooks/useAllReports';
+import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import {
+  fetchSingleReport,
+  getSingleReportQueryKey,
+} from '../hooks/useSingleReport';
+import allReportsGetServerSideProps from '../lib/allReportsGetServerSideProps';
 
 const Wrapper = styled.div`
   width: 75%;
@@ -36,15 +42,13 @@ const SearchInput = styled.input`
   }
 `;
 
-
-
 export interface DashboardPageProps {}
 
 const DashboardPage: FC<DashboardPageProps> = ({ ...props }) => {
   const [inputValue, setInputValue] = useState('');
   const debouncedInputValue = useDebouncedValue(inputValue, 400);
 
-  const { data } = useAllReports(debouncedInputValue[0])
+  const { data } = useAllReports(debouncedInputValue[0]);
 
   return (
     <PageContainer wide {...props}>
@@ -67,4 +71,4 @@ const DashboardPage: FC<DashboardPageProps> = ({ ...props }) => {
 
 export default DashboardPage;
 
-export const getServerSideProps = allReportsGetServerSideProps
+export const getServerSideProps = allReportsGetServerSideProps;

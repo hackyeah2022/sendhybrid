@@ -23,14 +23,20 @@ const useUploadFile = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress,
       })
-      .then((res) => {
-        setUploadedSuccessfully(true)
-        setBody(res.data)
+      .then(res => {
+        setUploadedSuccessfully(true);
+        setBody(res.data);
       })
       .catch(() => setErrorMessage('Error occurred!'));
   };
 
-  return { uploadFile, uploadProgress, errorMessage, uploadedSuccessfully, responseBody: body };
+  return {
+    uploadFile,
+    uploadProgress,
+    errorMessage,
+    uploadedSuccessfully,
+    responseBody: body,
+  };
 };
 
 export default useUploadFile;

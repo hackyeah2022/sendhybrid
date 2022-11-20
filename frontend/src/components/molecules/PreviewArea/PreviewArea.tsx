@@ -1,6 +1,6 @@
-import PDFPreview from "../../atoms/PDFPreview/PDFPreview";
-import {useEffect, useRef, useState} from "react";
-import styled from "styled-components";
+import PDFPreview from '../../atoms/PDFPreview/PDFPreview';
+import { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
 
 const PreviewWrapper = styled.div`
   margin-bottom: 4rem;
@@ -33,48 +33,45 @@ const TabButton = styled.button`
   }
 `;
 
-
 const PREVIEW_VERSIONS = {
-    CORRECTED: 'CORRECTED',
-    ORIGINAL: 'ORIGINAL',
+  CORRECTED: 'CORRECTED',
+  ORIGINAL: 'ORIGINAL',
 };
 
-const PreviewArea = ({reportDetails}) => {
+const PreviewArea = ({ reportDetails }) => {
+  const [previewVersion, setPreviewVersion] = useState(() => {
+    if (reportDetails?.isCorrectedFileAvailable)
+      return PREVIEW_VERSIONS.CORRECTED;
+    return PREVIEW_VERSIONS.ORIGINAL;
+  });
 
-    const [previewVersion, setPreviewVersion] = useState(() => {
-        if (reportDetails?.isCorrectedFileAvailable)
-            return PREVIEW_VERSIONS.CORRECTED;
-        return PREVIEW_VERSIONS.ORIGINAL;
-    });
+  const previewUrl =
+    previewVersion === PREVIEW_VERSIONS.ORIGINAL
+      ? reportDetails?.originalPreviewUrl
+      : reportDetails?.correctedPreviewUrl;
 
-    const previewUrl =
-        previewVersion === PREVIEW_VERSIONS.ORIGINAL
-            ? reportDetails?.originalPreviewUrl
-            : reportDetails?.correctedPreviewUrl;
+  if (!reportDetails) return null;
+  return (
+    <div>
+      {reportDetails.isCorrectedFileAvailable && (
+        <TabButton
+          active={previewVersion === PREVIEW_VERSIONS.CORRECTED}
+          onClick={() => setPreviewVersion(PREVIEW_VERSIONS.CORRECTED)}
+        >
+          Plik poprawiony
+        </TabButton>
+      )}
+      <TabButton
+        active={previewVersion === PREVIEW_VERSIONS.ORIGINAL}
+        onClick={() => setPreviewVersion(PREVIEW_VERSIONS.ORIGINAL)}
+      >
+        Plik oryginalny
+      </TabButton>
+      <PreviewWrapper>
+        <PDFPreview previewUrl={previewUrl} />
+      </PreviewWrapper>
+    </div>
+  );
+};
 
-    if(!reportDetails)
-        return null
-    return (
-        <div>
-            {reportDetails.isCorrectedFileAvailable && (
-                <TabButton
-                    active={previewVersion === PREVIEW_VERSIONS.CORRECTED}
-                    onClick={() => setPreviewVersion(PREVIEW_VERSIONS.CORRECTED)}
-                >
-                    Plik poprawiony
-                </TabButton>
-            )}
-            <TabButton
-                active={previewVersion === PREVIEW_VERSIONS.ORIGINAL}
-                onClick={() => setPreviewVersion(PREVIEW_VERSIONS.ORIGINAL)}
-            >
-                Plik oryginalny
-            </TabButton>
-            <PreviewWrapper>
-                <PDFPreview previewUrl={previewUrl} />
-            </PreviewWrapper>
-        </div>
-    )
-}
-
-export default PreviewArea
+export default PreviewArea;

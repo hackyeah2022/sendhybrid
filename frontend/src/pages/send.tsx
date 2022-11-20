@@ -7,9 +7,9 @@ import PageContainerBase from 'components/atoms/PageContainer/PageContainer';
 import FileInput from 'components/atoms/FileInput/FileInput';
 import Button from 'components/atoms/Button/Button';
 import Modal from 'components/atoms/Modal/Modal';
-import {useRouter} from "next/router";
-import {BarLoader} from "react-spinners";
-import theme from "../utils/styled/theme";
+import { useRouter } from 'next/router';
+import { BarLoader } from 'react-spinners';
+import theme from '../utils/styled/theme';
 
 export interface SendPageProps {}
 
@@ -39,7 +39,7 @@ const SendPage: FC<SendPageProps> = ({ ...props }) => {
     uploadedSuccessfully,
     responseBody,
   } = useUploadFile();
-    const isUploadInProgress = uploadProgress > 0 && !uploadedSuccessfully
+  const isUploadInProgress = uploadProgress > 0 && !uploadedSuccessfully;
   useEffect(() => setIsModalOpened(!!errorMessage), [errorMessage]);
   useEffect(() => {
     if (uploadedSuccessfully) {
@@ -63,9 +63,7 @@ const SendPage: FC<SendPageProps> = ({ ...props }) => {
           Wyślij plik
         </Button>
       )}
-        {isUploadInProgress && (
-            <BarLoader color={theme.colors.lightBlue} />
-        )}
+      {isUploadInProgress && <BarLoader color={theme.colors.lightBlue} />}
       <Modal opened={isModalOpened} setIsOpened={setIsModalOpened}>
         {errorMessage}
       </Modal>
