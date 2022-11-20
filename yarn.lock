@@ -438,6 +438,7 @@ __metadata:
     "@tanstack/react-query": ^4.16.1
     "@tanstack/react-table": ^8.5.30
     "@types/node": 18.7.23
+    "@types/nprogress": ^0.2.0
     "@types/react": 18.0.21
     "@types/react-dom": 18.0.6
     "@types/react-paginate": ^7.1.1
@@ -450,6 +451,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     framer-motion: ^7.6.5
     next: 12.3.1
+    nprogress: ^0.2.0
     prettier: ^2.7.1
     react: 18.2.0
     react-dom: 18.2.0
@@ -1092,6 +1094,13 @@ __metadata:
   version: 18.7.23
   resolution: "@types/node@npm:18.7.23"
   checksum: 2c8df0830d8345e5cd1ca17feb9cf43fa667aae749888e0a068c5c1b35eaedd2f9b24ed987a0758078395edf7a03681e5e0b7790a518ff7afe1ff6d8459f7b4a
+  languageName: node
+  linkType: hard
+
+"@types/nprogress@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@types/nprogress@npm:0.2.0"
+  checksum: 561384775008ae58111f038f8f9468b3de8987cd753feef9bf6d07af0e1343390d492a078bb08a7b53ac7370208e31e06ac069cb852c435d49f5fe218e9769c4
   languageName: node
   linkType: hard
 
@@ -3160,6 +3169,13 @@ __metadata:
   bin:
     next: dist/bin/next
   checksum: ac78592379999650f596a945019b14827818879e792ab37876bc71443bd697510d9ea00881787918f1543e6c6c5588111aeecb10342c2166a344e10ccd6bbc3e
+  languageName: node
+  linkType: hard
+
+"nprogress@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "nprogress@npm:0.2.0"
+  checksum: 66b7bec5d563ecf2d1c3d2815e6d5eb74ed815eee8563e0afa63d3f185ab1b9cf2ddd97e1ded263b9995c5019d26d600320e849e50f3747984daa033744619dc
   languageName: node
   linkType: hard
 
