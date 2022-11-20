@@ -10,17 +10,17 @@ export const getAllReportsQueryKey = (caseNumber?: string) => [
 
 const transformRes = res =>
   res.map(singleDoc => ({
+      ...singleDoc,
     id: singleDoc.id,
     name: singleDoc.name ?? 'Brak nazwy',
     caseNumber: singleDoc.caseNumber ?? 'Brak nr sprawy',
     sent: singleDoc.sent,
-    validationGeneralFailed: singleDoc.validationGeneralFailed,
       isCorrectedFileAvailable: Boolean(singleDoc.correctedFileId),
       originalPreviewUrl: `${environment.API_URL}/files/content/${singleDoc.originalFileId}`,
       correctedPreviewUrl: `${environment.API_URL}/files/content/${singleDoc.correctedFileId}`,
       verificationDate: singleDoc.created,
     date: singleDoc.created,
-      feedbackMessagesProps: getFeedbackMessagesProps(res)
+      feedbackMessagesProps: getFeedbackMessagesProps(singleDoc)
   }));
 
 export const fetchAllReports = (caseId?: string) =>
