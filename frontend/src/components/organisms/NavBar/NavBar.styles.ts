@@ -13,4 +13,8 @@ export const Wrapper = styled(motion.nav)`
   border-bottom: 2px solid ${({ theme }) => theme.colors.lightGray};
   z-index: ${({ theme }) => theme.zIndexes.navBar};
   background: ${({ theme }) => theme.colors.white};
+
+  @media print {
+    display: none;
+  }
 `;

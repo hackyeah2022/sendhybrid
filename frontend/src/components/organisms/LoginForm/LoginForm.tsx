@@ -27,10 +27,9 @@ const LoginForm: FC<Props> = ({ ...props }) => {
     if (username === 'jankowalski' && password === '1234') {
       setUserRole('privileged');
       router.push(routes.SUBMISSIONS);
-    }
-    if (username === 'administrator' && password === '1234') {
+    } else if (username === 'administrator' && password === '1234') {
       setUserRole('admin');
-      router.push(routes.SUBMISSIONS);
+      router.push(routes.ADMIN_DASHBOARD);
     } else if (!!username && !!password) {
       showNotification({
         title: 'Błąd!',

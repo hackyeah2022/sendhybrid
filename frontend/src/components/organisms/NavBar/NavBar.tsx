@@ -110,7 +110,10 @@ const UserDropdown = ({
       <Dropdown>
         <Menu.Item>
           <Link href="/user-profile">
-            <DropdownMenuItem>Profil użytkownika</DropdownMenuItem>
+            <DropdownMenuItem>
+              Profil{' '}
+              {name === 'Administrator' ? 'administratora' : 'użytkownika'}
+            </DropdownMenuItem>
           </Link>
         </Menu.Item>
         <Menu.Item>
@@ -154,17 +157,22 @@ const NavBar: FC<Props> = ({ ...props }) => {
             <Logo src="/KAS_logo.jpg" />
           </a>
         </Link>
-        {isLoggedIn && (
+        {isLoggedIn && userRole === 'privileged' && (
           <Link href="/send" passHref legacyBehavior>
             <SpecialNavBarItem>Wyślij nowy dokument</SpecialNavBarItem>
           </Link>
         )}
-        {isLoggedIn && (
+        {isLoggedIn && userRole === 'privileged' && (
           <>
             <Link href="/submissions" passHref legacyBehavior>
               <NavLink>Dokumenty</NavLink>
             </Link>
           </>
+        )}
+        {isLoggedIn && userRole === 'admin' && (
+          <Link href="/admin/dashboard" passHref legacyBehavior>
+            <NavLink>Panel administratora</NavLink>
+          </Link>
         )}
       </LeftSideWrapper>
       {router.pathname !== routes.LOGIN && !isLoggedIn && (
@@ -176,7 +184,7 @@ const NavBar: FC<Props> = ({ ...props }) => {
       )}
       {isLoggedIn && (
         <UserDropdown
-          name="Jan Kowalski"
+          name={userRole === 'privileged' ? 'Jan Kowalski' : 'Administrator'}
           setUserRole={setUserRole}
           router={router}
         />
