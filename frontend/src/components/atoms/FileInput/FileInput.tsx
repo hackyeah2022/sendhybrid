@@ -1,5 +1,6 @@
-import { FC } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { FC, useEffect } from 'react';
+import { ErrorCode, useDropzone } from 'react-dropzone';
+import { showNotification } from '@mantine/notifications';
 
 import Button from 'components/atoms/Button/Button';
 
@@ -18,11 +19,23 @@ const FileInput: FC<Props> = ({
   ...props
 }) => {
   const onDrop = (acceptedFiles: File[]) => setSelectedFile(acceptedFiles[0]);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    maxFiles: 1,
-    maxSize: 1024 * 1024 * 100,
-  });
+  const { getRootProps, getInputProps, isDragActive, fileRejections } =
+    useDropzone({
+      onDrop,
+      maxFiles: 1,
+      maxSize: 1024 * 1024 * 100,
+    });
+
+  useEffect(() => {
+    fileRejections.length >= 1 &&
+      fileRejections[0].errors.length >= 1 &&
+      fileRejections[0].errors[0].code === ErrorCode.FileTooLarge &&
+      showNotification({
+        title: 'Błąd!',
+        message: 'Plik nie może być większy niż 100MB.',
+        color: 'red',
+      });
+  }, [fileRejections]);
 
   return (
     <S.Wrapper
