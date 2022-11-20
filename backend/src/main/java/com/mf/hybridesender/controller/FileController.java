@@ -50,7 +50,7 @@ public class FileController {
         boolean formsValidationFailed = !pdfReader.checkIfFreeOfForms(savedFile.getId());
 
         boolean generalValidationFailed = pdfValidationFailed || signatureValidationFailed || fontsValidationFailed || imagesValidationFailed || formsValidationFailed;
-
+        pdfReader.senderData(savedFile.getId());
         Document document = new Document();
         document.setValidationPdfFailed(pdfValidationFailed);
         document.setValidationSignatureFailed(signatureValidationFailed);
