@@ -108,19 +108,20 @@ const UserDropdown = ({
       </DropdownButton>
 
       <Dropdown>
-        <Menu.Item>
-          <Link href="/user-profile">
-            <DropdownMenuItem>
-              Profil{' '}
-              {name === 'Administrator' ? 'administratora' : 'użytkownika'}
-            </DropdownMenuItem>
-          </Link>
-        </Menu.Item>
-        <Menu.Item>
-          <Link href="/settings">
-            <DropdownMenuItem>Ustawienia</DropdownMenuItem>
-          </Link>
-        </Menu.Item>
+        {name !== 'Administrator' && (
+          <>
+            <Menu.Item>
+              <Link href="/user-profile">
+                <DropdownMenuItem>Profil użytkownika</DropdownMenuItem>
+              </Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link href="/settings">
+                <DropdownMenuItem>Ustawienia</DropdownMenuItem>
+              </Link>
+            </Menu.Item>
+          </>
+        )}
         <Menu.Item>
           <DropdownMenuItem
             onClick={() => {
