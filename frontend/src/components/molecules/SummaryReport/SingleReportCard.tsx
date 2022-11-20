@@ -1,7 +1,7 @@
 import {ReportDetails} from "../../../types/report";
 import {FC} from "react";
 import styled from "styled-components";
-import ReportError from "../../atoms/ReportError/ReportError";
+import FeedbackMessage from "../../atoms/FeedbackMessage/FeedbackMessage";
 import StatusIcon from "../../atoms/StatusIcon/StatusIcon";
 
 const Wrapper = styled.div`
@@ -98,7 +98,7 @@ const SingleReportCard: FC<SingleReportCardProps> = ({reportDetails: {errorsList
                     {
                         errorsList.map((errorMessage) => (
                             <div>
-                                <ReportError key={errorMessage} errorMessage={errorMessage}/>
+                                <FeedbackMessage key={errorMessage} errorMessage={errorMessage}/>
                             </div>
                         ))
                     }

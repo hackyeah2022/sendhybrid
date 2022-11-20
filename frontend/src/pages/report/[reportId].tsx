@@ -1,14 +1,18 @@
 import {GetServerSidePropsContext, GetServerSidePropsResult} from "next";
 import {ReportDetails} from "../../types/report";
-import {FC} from "react";
+import {FC, useState} from "react";
 import PDFPreview from "../../components/atoms/PDFPreview/PDFPreview";
 import styled from "styled-components";
-import ReportError from "../../components/atoms/ReportError/ReportError";
+import FeedbackMessage from "../../components/atoms/FeedbackMessage/FeedbackMessage";
 import PageContainer from "../../components/atoms/PageContainer/PageContainer";
 import XCircle from "../../icons/XCircle";
 import CheckCircle from "../../icons/CheckCircle";
 import GoBack from "../../components/atoms/GoBack/GoBack";
 import environment from "../../environment";
+import getFeedbackMessages from "../../lib/getFeedbackMessagesProps";
+import getFeedbackMessagesProps from "../../lib/getFeedbackMessagesProps";
+import StatusIcon from "../../components/atoms/StatusIcon/StatusIcon";
+import Address from "../../components/atoms/Address/Address";
 
 const Wrapper = styled.div`
   display: grid;
@@ -36,11 +40,13 @@ const PreviewArea = styled.div`
 
 const TabButton = styled.button`
   background: ${({theme, active}) => active ? theme.colors.blue : theme.colors.white};
-  color: ${({theme, active}) => active ? theme.colors.white : theme.colors.black};
+  color: ${({theme, active}) => active ? theme.colors.white : theme.colors.gray};
+  font-weight: ${({active}) => active ? 'bold' : 'normal'};
   border: 2px solid ${({theme}) => theme.colors.blue};
   border-bottom: 0;
   margin: 0;
   font-family: inherit;
+  cursor: pointer;
   padding: 0.4rem 0.7rem;
   &:first-of-type {
     border-top-left-radius: 0.25rem;
@@ -89,54 +95,59 @@ const ErrorsList = styled.div`
 `
 
 
+const PREVIEW_VERSIONS = {
+    CORRECTED: 'CORRECTED',
+    ORIGINAL: 'ORIGINAL'
+}
+
 interface ReportPageProps {
     reportDetails: ReportDetails
 }
 
 const ReportPage: FC<ReportPageProps> = ({reportDetails}) => {
-    const passedVerification = reportDetails.errorsList.length === 0
-    const StatusIcon = passedVerification ? CheckCircle : XCircle;
-    const statusMessage = passedVerification ? 'Weryfikacja przeiegła pomyślnie' : 'Weryfikacja wykazała błędy'
+    const passedVerification = !reportDetails.validationGeneralFailed
+    const statusMessage = passedVerification ? 'Weryfikacja przebiegła pomyślnie' : 'Weryfikacja wykazała błędy'
+    const [previewVersion, setPreviewVersion] = useState(() => {
+        if(reportDetails.isCorrectedFileAvailable) return PREVIEW_VERSIONS.CORRECTED
+        return PREVIEW_VERSIONS.ORIGINAL
+    })
 
+    const previewUrl = previewVersion === PREVIEW_VERSIONS.ORIGINAL ? reportDetails.originalPreviewUrl : reportDetails.correctedPreviewUrl
+    console.log(previewUrl)
     return (
         <PageContainer wide>
         <Wrapper>
             <div>
                 <GoBack />
-                <ReportName>{reportDetails.name}</ReportName>
+                <ReportName>{reportDetails.name ?? 'Bez nazwy'}</ReportName>
                 <span>
                     ID pliku: {reportDetails.id} <br />
-                    Data weryfikacji: {new Date(reportDetails.verificationDate).toLocaleDateString()} <br />
-                    Wielkość pliku: {reportDetails.fileSize}b
+                    Data weryfikacji: {new Date(reportDetails.verificationDate).toLocaleString()} <br />
                 </span>
                 <AddressesGrid>
                     <div>
                         <span>Nadawca</span>
-                        <address>
-                            Lipowa 10 <br/>
-                            00-000 Kraków
-                        </address>
+                        <Address prefix="receiver" reportDetails={reportDetails} />
                     </div>
                     <div>
                         <span>Odbiorca</span>
-                        <address>
-                            Lipowa 10 <br/>
-                            00-000 Kraków
-                        </address>
+                        <Address prefix="sender" reportDetails={reportDetails} />
                     </div>
                 </AddressesGrid>
                 <StatusWrapper>
                     <StatusMessage isOk={passedVerification}>
-                        <StatusIcon />
+                        <StatusIcon isOk={passedVerification} />
                         <span>
                             {statusMessage}
                         </span>
                     </StatusMessage>
                     <ErrorsList>
                         {
-                            reportDetails.errorsList.map((errorMessage) => (
-                                <ReportErrorWrapper>
-                                    <ReportError key={errorMessage} errorMessage={errorMessage} />
+                            reportDetails.feedbackMessagesProps.map(({message, isOk}) => (
+                                <ReportErrorWrapper key={message}>
+                                    <FeedbackMessage
+                                        isOk={isOk}
+                                        message={message} />
                                 </ReportErrorWrapper>
                             ))
                         }
@@ -144,10 +155,20 @@ const ReportPage: FC<ReportPageProps> = ({reportDetails}) => {
                 </StatusWrapper>
             </div>
             <PreviewArea>
-                <TabButton>Corrected file</TabButton>
-                <TabButton active>Original file</TabButton>
+                {
+                    reportDetails.isCorrectedFileAvailable  && (
+                        <TabButton
+                            active={previewVersion === PREVIEW_VERSIONS.CORRECTED}
+                            onClick={() => setPreviewVersion(PREVIEW_VERSIONS.CORRECTED)}
+                        >Corrected file</TabButton>
+                    )
+                }
+                <TabButton
+                    active={previewVersion === PREVIEW_VERSIONS.ORIGINAL}
+                    onClick={() => setPreviewVersion(PREVIEW_VERSIONS.ORIGINAL)}
+                >Original file</TabButton>
                 <PreviewWrapper>
-                    <PDFPreview previewUrl={reportDetails.previewUrl} />
+                    <PDFPreview key={previewUrl} previewUrl={previewUrl} />
                 </PreviewWrapper>
             </PreviewArea>
         </Wrapper>
@@ -158,20 +179,19 @@ const ReportPage: FC<ReportPageProps> = ({reportDetails}) => {
 export default ReportPage
 
 export const getServerSideProps = async ({params: {reportId}}: GetServerSidePropsContext): GetServerSidePropsResult<{reportDetails: ReportDetails}> => {
-    const res = await fetch(`${environment.API_URL}/files/details/${reportId}`).then(res => res.json())
+    const res = await fetch(`${environment.API_URL}/documents/getById/${reportId}`).then(res => res.json())
+    console.log(res)
     return {
         props: {
             reportDetails: {
                 id: res.id,
                 name: res.name,
-                previewUrl: `${environment.API_URL}/files/content/${res.id}`,
-                verificationDate: '2022-10-12',
-                fileSize: 4000,
-                errorsList: [
-                    'Some error',
-                    'Some error 2',
-                    'Some error 3',
-                ],
+                isCorrectedFileAvailable: res.correctedFileId && res.correctedFileId.trim().length > 0,
+                originalPreviewUrl: `${environment.API_URL}/files/content/${res.originalFileId}`,
+                correctedPreviewUrl: `${environment.API_URL}/files/content/${res.correctedFileId}`,
+                verificationDate: res.created,
+                feedbackMessagesProps: getFeedbackMessagesProps(res),
+                ...res
             }
         }
     }
